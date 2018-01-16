@@ -2,7 +2,7 @@
 
 This repo contains resources for working with the MS (Medicare Severity) DRG (Diagnostic Related Group) Grouper software with Medicare Code Editor ([MCE](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/FY2018-IPPS-Final-Rule-Home-Page.html)), issued by the Centers for Medicare and Medicaid Services ([CMS](https://www.cms.gov)). 
 
-## Ownership
+## Intellectual Property
 No infringement is intended on the existing rights for the MS DRG Grouper and Medicare Code Editor. The MS DRG Grouper software and ICD codes belong to others. This simply reformats, organizes, and prepares for import to SQL Server the documentation available on cms.gov. The resources contained in this GitHub repo were developed on my own time, without using my employer's equipment, supplies, facilities, or trade secret information. 
 
 ## Sample_SQL_Scripts
@@ -18,9 +18,11 @@ No infringement is intended on the existing rights for the MS DRG Grouper and Me
 
 ## CMS_ICD_Diagnoses_POA_Exempt
 ### Sources for CMS MCE Code Exceptions
-  * All files are from https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/HospitalAcqCond/Coding.html Note that only fiscal years 2015-2018 are available there, which means that the only POA documentation for ICD-9 is for FY 2015. However, I BELIEVE (TODO FINISH), based on "ICD-9-CM Official Guidelines for Coding and Reporting Effective October 1, 2011", that there was a constant list of ICD-9-CM diagnosis codes that were exempt from POA, for CMS FY 2011-2015. 
+  * All files are from https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/HospitalAcqCond/Coding.html 
+  * Note that only fiscal years 2015-2018 are available there, which means that the only POA documentation for ICD-9 is for FY 2015. However, I BELIEVE (TODO FINISH), based on "ICD-9-CM Official Guidelines for Coding and Reporting Effective October 1, 2011", that there was a constant list of ICD-9-CM diagnosis codes that were exempt from POA, for CMS FY 2011-2015. 
+
 | CMS FY | ICD Version | Source File Is |
-| -------| ----------- | -------------- |
+| ------ | ----------- | ------------   |
 | 2018 | 10 | [FY 2018 Present On Admission (POA) Exempt List](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/HospitalAcqCond/Downloads/FY-2018-Present-On-Admission-POA-Exempt-List-.zip) --> "POAexemptCodes2018.txt" |
 | 2017 | 10 | [FY 2017 Present On Admission (POA) Exempt List](https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2017-POA-Exempt-List.zip) --> "POAexemptCodes2017.txt" |
 | 2016 | 10 | [FY 2016 Present On Admission (POA) Exempt List](https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2016-POA-Exempt-List.zip) --> "POAexemptCodes2016.txt" |
@@ -38,22 +40,23 @@ No infringement is intended on the existing rights for the MS DRG Grouper and Me
 
 ### Sources for CMS MCE Code Exclusions
   * I was able to locate errata for v33-35 (ICD-10). None of the changes that were noted there affected which ICD codes are exclusions.
+
 | MCE Version | ICD Version | Source File Is |
-| ----------- | ----------- | -------|
-| 35 | 10 |[FY2018 IPPS Final Rule, FY 2018 Final Rule and Correction Notice Data Files](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/FY2018-IPPS-Final-Rule-Home-Page-Items/FY2018-IPPS-Final-Rule-Data-Files.html) --> [Definition of Medicare Code Edits v35](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/Downloads/FY2018-CMS-1677-FR-Code-Edits.zip) --> "Definitions of Medicare Code Edits_v_35.txt" |
-| 34 | 10 |[FY2017 IPPS Final Rule, FY 2017 Final Rule and Correction Notice Data Files](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/FY2017-IPPS-Final-Rule-Home-Page-Items/FY2017-IPPS-Final-Rule-Data-Files.html) --> [Definition of Medicare Code Edits v34](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/Downloads/FY2017-CMS-1655-FR-Code-Edits.zip) --> "Definitions of Medicare Code Edits_v_35.txt" |
-| 33 | 10 |[FY2016 IPPS Final Rule, FY 2016 Final Rule and Correction Notice Data Files](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/FY2016-IPPS-Final-Rule-Home-Page-Items/FY2016-IPPS-Final-Rule-Data-Files.html) --> [Definition of Medicare Code Edits v33](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/Downloads/FY2016-CMS-1632-FR-Definition-Code-Ethics.zip) --> "ICD-10 Definitions of Medicare Code Edits_v33.0.pdf" |
-| 32 | 9 |[Files for Download, Files for FY 2015 Final Rule and Correction Notice](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/Acute-Inpatient-Files-for-Download-Items/FY2015-Final-Rule-CorrectionNotice-Files.html) --> [Definition of Medicare Code Edits](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/Downloads/FY2015-FR-MCE-v32.pdf) --> "FY2015-FR-MCE-v32.pdf" |
-| 31 | 9 |[Files for Download, Files for FY 2014 Final Rule and Correction Notice](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/Acute-Inpatient-Files-for-Download-Items/FY2014-FinalRule-CorrectionNotice-Files.html) --> [Definition of Medicare Code Edits](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/Downloads/FY_14_Definition_of-Medicare_Code_Edits_V_31_Manual.pdf) --> "FY_14_Definition_of-Medicare_Code_Edits_V_31_Manual.pdf" |
-| 30 | 9 |[Files for Download, Files for FY 2013 Final Rule and Correction Notice](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/Acute-Inpatient-Files-for-Download-Items/FY2013-FinalRule-CorrectionNotice-Files.html) --> [Definition of Medicare Code Edits](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/Downloads/MCEv30_Definitions_of_Medicare_Code_Edits_User_manual.pdf) --> "MCEv30_Definitions_of_Medicare_Code_Edits_User_manual.pdf" |
-| 28 | 9 |[Files for Download, Files for FY 2012 Final Rule and Correction Notice](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/Acute-Inpatient-Files-for-Download-Items/FY2012-FinalRule-CorrectionNotice-Files.html) --> [Definition of Medicare Code Edits](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/Downloads/FY_2012_MCE_V280.pdf) --> "FY_2012_MCE_V280.pdf" |
-| 27 | 9 |[Files for Download, Files for FY 2011 Final Rule and Correction Notice](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/Acute-Inpatient-Files-for-Download-Items/CMS1255464.html) --> [Definition of Medicare Code Edits](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/Downloads/definition_of_medicare_code_edits.pdf) --> "definition_of_medicare_code_edits.pdf" |
-| 26 | 9 |[Files for Download, Files for FY 2010 Final Rule and Correction Notice](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/Acute-Inpatient-Files-for-Download-Items/CMS1247873.html) --> [FY 2010 Definition of Medicare Code Edits](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/Downloads/FY_2010_FR_MCE.pdf) --> "definition_of_medicare_code_edits.pdf" |
+| ----------- | ----------- | -------        |
+| 35 | 10 | [FY2018 IPPS Final Rule, FY 2018 Final Rule and Correction Notice Data Files](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/FY2018-IPPS-Final-Rule-Home-Page-Items/FY2018-IPPS-Final-Rule-Data-Files.html) --> [Definition of Medicare Code Edits v35](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/Downloads/FY2018-CMS-1677-FR-Code-Edits.zip) --> "Definitions of Medicare Code Edits_v_35.txt" |
+| 34 | 10 | [FY2017 IPPS Final Rule, FY 2017 Final Rule and Correction Notice Data Files](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/FY2017-IPPS-Final-Rule-Home-Page-Items/FY2017-IPPS-Final-Rule-Data-Files.html) --> [Definition of Medicare Code Edits v34](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/Downloads/FY2017-CMS-1655-FR-Code-Edits.zip) --> "Definitions of Medicare Code Edits_v_35.txt" |
+| 33 | 10 | [FY2016 IPPS Final Rule, FY 2016 Final Rule and Correction Notice Data Files](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/FY2016-IPPS-Final-Rule-Home-Page-Items/FY2016-IPPS-Final-Rule-Data-Files.html) --> [Definition of Medicare Code Edits v33](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/Downloads/FY2016-CMS-1632-FR-Definition-Code-Ethics.zip) --> "ICD-10 Definitions of Medicare Code Edits_v33.0.pdf" |
+| 32 | 9 | [Files for Download, Files for FY 2015 Final Rule and Correction Notice](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/Acute-Inpatient-Files-for-Download-Items/FY2015-Final-Rule-CorrectionNotice-Files.html) --> [Definition of Medicare Code Edits](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/Downloads/FY2015-FR-MCE-v32.pdf) --> "FY2015-FR-MCE-v32.pdf" |
+| 31 | 9 | [Files for Download, Files for FY 2014 Final Rule and Correction Notice](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/Acute-Inpatient-Files-for-Download-Items/FY2014-FinalRule-CorrectionNotice-Files.html) --> [Definition of Medicare Code Edits](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/Downloads/FY_14_Definition_of-Medicare_Code_Edits_V_31_Manual.pdf) --> "FY_14_Definition_of-Medicare_Code_Edits_V_31_Manual.pdf" |
+| 30 | 9 | [Files for Download, Files for FY 2013 Final Rule and Correction Notice](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/Acute-Inpatient-Files-for-Download-Items/FY2013-FinalRule-CorrectionNotice-Files.html) --> [Definition of Medicare Code Edits](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/Downloads/MCEv30_Definitions_of_Medicare_Code_Edits_User_manual.pdf) --> "MCEv30_Definitions_of_Medicare_Code_Edits_User_manual.pdf" |
+| 28 | 9 | [Files for Download, Files for FY 2012 Final Rule and Correction Notice](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/Acute-Inpatient-Files-for-Download-Items/FY2012-FinalRule-CorrectionNotice-Files.html) --> [Definition of Medicare Code Edits](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/Downloads/FY_2012_MCE_V280.pdf) --> "FY_2012_MCE_V280.pdf" |
+| 27 | 9 | [Files for Download, Files for FY 2011 Final Rule and Correction Notice](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/Acute-Inpatient-Files-for-Download-Items/CMS1255464.html) --> [Definition of Medicare Code Edits](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/Downloads/definition_of_medicare_code_edits.pdf) --> "definition_of_medicare_code_edits.pdf" |
+| 26 | 9 | [Files for Download, Files for FY 2010 Final Rule and Correction Notice](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/Acute-Inpatient-Files-for-Download-Items/CMS1247873.html) --> [FY 2010 Definition of Medicare Code Edits](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/Downloads/FY_2010_FR_MCE.pdf) --> "definition_of_medicare_code_edits.pdf" |
 
 ### CMS MCE Code Exclusions: Data Dictionary and Summary Counts
 #### Data Dictionary for CMS MCE Code Exclusions in this Repo
-| Field Name     | Valid Values and/or Description of Values |
-| -------------- | ------------------------------------------|
+| Field Name     | Valid Values and/or Description of Values  |
+| -------------- | ------------------------------------------ |
 | ICD_Code_Type | Valid Values: P (ICD surgical procedure code) or D (ICD diagnosis code) |
 | ICD_Desc      | The code description provided in the MCE documentation. This is the "short" description |
 | MCE_Version   | The Medicare Code Editor (MCE) release version. Note that can differ from the CMS DRG Grouper software version/CMS ICD-code release version (e.g., no v29 exists), per the Installation Guide for the MS Grouper with MCE Software. |
@@ -62,23 +65,23 @@ No infringement is intended on the existing rights for the MS DRG Grouper and Me
 
 #### Mapping MCE Fields to Labels in MCE Documentation
 | Label in MCE Documentation | MCE_Section | MCE_Exclusion_Type | ICD_Code_Type |
-| -------------------------- | ----------- | ------------------ | --------------|
-| Age conflict: Perinatal/Newborn diagnoses | 4.A  | Newborn_Only	| D|
-| Age conflict: Pediatric diagnoses (age 0 through 17) | 4.B  | Pediatric_Only	| D|
-| Age conflict: Maternity diagnoses (age 12 through 55) | 4.C  | Maternity_Only	| D|
-| Age conflict: Adult diagnoses (age 15 through 124) | 4.D  | Adult_Only	| D|
-| Sex conflict: Diagnoses for females only | 5.A  | Female_Only	| D|
-| Sex conflict: Procedures for females only | 5.B  | Female_Only	| P|
-| Sex conflict: Diagnoses for males only | 5.C  | Male_Only	| D|
-| Sex conflict: Procedures for males only | 5.D  | Male_Only	| P|
-| Manifestation code as principal diagnosis | 6    | Principal_Manifestation	| D|
-| Questionable admission | 8    | Principal_Questionable_Admit	| D|
-| Unacceptable principal diagnosis | 9    | Principal_Unacceptable	| D|
-| Non-covered procedure: Always | 11.A | Noncovered_Always	| P|
-| Non-covered procedure: Beneficiary over age 60 | 11.F | Noncovered_Over60	| P|
-| Limited coverage: Always | 17.A | Limited_Coverage	| P|
-| Wrong procedure performed | 18   | Wrong_Performed	| P|
-| Procedure inconsistent with LOS | 19   | Noncovered_LOS_96hr	| P|
+| -------------------------- | ----------- | ------------------ | ------------- |
+| Age conflict: Perinatal/Newborn diagnoses | 4.A  | Newborn_Only	| D |
+| Age conflict: Pediatric diagnoses (age 0 through 17) | 4.B  | Pediatric_Only	| D |
+| Age conflict: Maternity diagnoses (age 12 through 55) | 4.C  | Maternity_Only	| D |
+| Age conflict: Adult diagnoses (age 15 through 124) | 4.D  | Adult_Only	| D |
+| Sex conflict: Diagnoses for females only | 5.A  | Female_Only	| D |
+| Sex conflict: Procedures for females only | 5.B  | Female_Only	| P |
+| Sex conflict: Diagnoses for males only | 5.C  | Male_Only	| D |
+| Sex conflict: Procedures for males only | 5.D  | Male_Only	| P |
+| Manifestation code as principal diagnosis | 6    | Principal_Manifestation	| D |
+| Questionable admission | 8    | Principal_Questionable_Admit	| D |
+| Unacceptable principal diagnosis | 9    | Principal_Unacceptable	| D |
+| Non-covered procedure: Always | 11.A | Noncovered_Always	| P |
+| Non-covered procedure: Beneficiary over age 60 | 11.F | Noncovered_Over60	| P |
+| Limited coverage: Always | 17.A | Limited_Coverage	| P |
+| Wrong procedure performed | 18   | Wrong_Performed	| P |
+| Procedure inconsistent with LOS | 19   | Noncovered_LOS_96hr	| P |
 
 ### Summary Totals for CMS MCE Code Exclusions in this Repo
 | MCE Section | MCE Exclusion Type | ICD Code Type | v26 | v27| v28 | v30 | v31 | v32 | v33 | v34 | v35 |
