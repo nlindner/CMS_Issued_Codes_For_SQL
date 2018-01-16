@@ -1,0 +1,11 @@
+11.0  
+9 
+1 SQLCHAR 0   5 ""       1 ICD_Code_Order   Latin1_General_CI_AS
+2 SQLCHAR 0   1 ""       0 Filler_01        Latin1_General_CI_AS
+3 SQLCHAR 0   7 ""       2 Diagnosis_Code   Latin1_General_CI_AS
+4 SQLCHAR 0   1 ""       0 Filler_02        Latin1_General_CI_AS
+5 SQLCHAR 0   1 ""       3 Code_Is_HIPAA_Valid   Latin1_General_CI_AS
+6 SQLCHAR 0   1 ""       0 Filler_03        Latin1_General_CI_AS
+7 SQLCHAR 0   60 ""      4 Code_Desc_Short   Latin1_General_CI_AS
+8 SQLCHAR 0   1 ""       0 Filler_04        Latin1_General_CI_AS
+9 SQLCHAR 0   323 "\r\n" 5 Code_Desc_Long   Latin1_General_CI_AS

@@ -1,0 +1,5 @@
+11.0  
+3 
+1 SQLCHAR 0   5 "\t"        0 ICD_Code_Order        Latin1_General_CI_AS
+2 SQLCHAR 0   8 "\t"        1 Diagnosis_Code_With_Period   Latin1_General_CI_AS
+3 SQLCHAR 0   323 "\r\n"    2 Code_Desc_Long        Latin1_General_CI_AS
