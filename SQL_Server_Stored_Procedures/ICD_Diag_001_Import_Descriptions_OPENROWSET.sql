@@ -25,19 +25,24 @@ BEGIN
 		ICD_Diag_001_Import_Descriptions_OPENROWSET
 
 	DESCRIPTION
+		*	Includes ICD-9 and ICD-10 diagnosis code descriptions from CMS releases FY 2010-2018
 		*	This is the simple (OPENROWSET) method to import this info.
 			dbo.ICD_Diag_001_Import_Descriptions_AsValues does exactly the same thing,
 			but does not require OPENROWSET permissions (i.e., ADMINISTER BULK OPERATIONS)
 		*	This imports flat files with ICD-9 and ICD-10 diagnosis code descriptions, 
 			available for download from cms.gov, into a SQL Server table, to serve as a 
 			simple lookup/reference/dimension table. 
-		*	This loads ICD-9 and ICD-10 separately because the code-description files
-			on cms.gov have a different layout and format for ICD-9 vs ICD-10, as:
-			*	ICD-10: one file, fixed-length format, with both short and long descriptions
-			*	ICD-9: two files, fixed-length format, one with the diagnosis code and the 
-				short description, the other with the code and long description.
-			*	Both files have a fixed-length format with a space between each field.
-				The .fmt files have a placeholder (Filler_##) for them, but does not load 
+			*	ICD-9: See repo readme for details on what cleaning was applied to generate
+				the flat files with ICD-9 code descriptions (that is, save-as of Excel files)
+				I did not attempt to replicate the file layout of the ICD-10 files
+		*	File format/layout available here:
+			*	ICD9_CM: one file, bar-delimited format, with both short and long descriptions,
+				with double-quotes surrounding every field. Note that this file specification
+				escapes any double-quotes within the descriptions with (e.g., "" if the code
+				description includes a "), so the insert statement cleans those out again.
+			*	ICD10_CM: one file, fixed-width format, with both short and long descriptions
+			*	The fixed-width format means that no delimiters exist. To account for that,
+				the .fmt file has placeholders (Filler_##) for them, but does not load 
 				them to the permanent output table
 		*	Note that the file specification for the ICD-10 order files allows
 			the ICD_Desc_Long field to be up to length = 323 (400 - 77), but the
@@ -59,8 +64,7 @@ BEGIN
 			from the table, which must already exist
 		@Which_ICD_Version_To_Load (Required, if other than default of 'ALL')
 			Valid Values: 'ALL', '9', '09', '10'
-			Specifies which ICD-version codes should be loaded, defaults to loading
-			all of them
+			Specifies which ICD-version codes should be loaded, defaults to loading all
 		@Source_File_Dir
 			Required input parameter. The location of the CMS_ICD_Code_Descriptions
 			subdirectory
@@ -72,36 +76,12 @@ BEGIN
 			'TRUNCATE': TRUNCATE the existing output table
 			'DELETE_ICD9': Delete any ICD-9 codes from the existing output table
 			'DELETE_ICD10': Delete any ICD-10 codes from the existing output table
-		*	LOAD ICD-9: Dependent on @Which_ICD_Version_To_Load IN ('ALL', '9', '09')
-			*	Create temporary table #CMS_ICD9_Release_Map and populate it with the 
-				ICD-9 CMS fiscal years (FY), and effective/end dates for all files loaded here
-				along with the CMS ICD-9 code release version
-				*	Note that the CMS ICD-9 code release version here differs from the 
-					Medicare Code Editor (MCE) release version in the MCE SPs in this repo
-			*	Create temp table #CMS_ICD9_Diag_Desc_Files and populate it with both the 
-				"short" and "long" code description files to load for each CMS fiscal year
-				*	Unlike the ICD-10 load process and other SPs in this repo, the only 
-					non-Excel files that I could locate on cms.gov for ICD-9 diagnosis code 
-					descriptions are separate "short" and "long" description files for each FY.
-			*	Create temp tables #CMS_ICD9_Diag_Desc_Short and #CMS_ICD9_Diag_Desc_Long that 
-				will be loaded from either the "short" or the "long" code description files
-			*	Loop through all ICD-9 CMS FYs with a cursor, loading the temp tables
-				with all available description files via OPENROWSET. For each CMS FY, must
-				load both a short and a long description file.
-				*	These files were downloaded directly from cms.gov, so they
-					have a fixed-length format with a space between each field.
-					The .fmt file has a placeholder for them, but does not load them
-					to the permanent output table
-			*	Load the permanent output table with ICD-9 codes and descriptions
-		*	LOAD ICD-10: Dependent on @Which_ICD_Version_To_Load IN ('ALL', '10')
-			*	Create temporary table #CMS_ICD10_Release_Map and populate it with the 
-				ICD-10 CMS FYs, and effective/end dates for all files loaded here
-			*	Loop through all ICD-10 CMS FYs with a cursor, loading the permanent output 
+		*	Load all ICD diagnosis codes and their descriptions:
+			*	Create temporary table #CMS_ICD_Diag_Release_Map and populate it, conditional on 
+				@Which_ICD_Version_To_Load, with the files that will be loaded here, and 
+				the CMS release info (ICD version, CMS FY, and effective/end dates) for each file
+			*	Loop through all ICD CMS FYs with a cursor, loading the permanent output 
 				table with all available description files via OPENROWSET.
-				*	These files were downloaded directly from cms.gov, so they
-					have a fixed-length format with a space between each field.
-					The .fmt file has a placeholder for them, but does not load them
-					to the permanent output table
 
 	EXAMPLE CALL
 	exec dbo.ICD_Diag_001_Import_Descriptions_OPENROWSET 
@@ -112,6 +92,18 @@ BEGIN
 			'C:\Users\Nicole\Documents\GitHub\CMS_MS_DRG_Grouper_Help\CMS_ICD_Code_Descriptions'
 
 	CHANGE LOG
+		2018.02.11 NLM
+			*	Added FY 2010 ICD codes
+			*	Refactored the import procedure for ICD-9, simplifying this SP, because the 
+				FY 2010 flat file differed from all other ICD-9 code files available on
+				cms.gov. See repo README for details on how the files differed and what I did
+				to create the ICD-9 files with a single layout
+				*	Instead of trying to deal with different file layouts among the ICD-9 codes
+					(and dealing with other ICD-9 releases that had two separate flat .txt files, 
+					one with short descriptions, the other with long, I finally broke down and 
+					did a save-as of the Excel files within the ICD-9 zip archives
+					to be a standard file format that is importable by SQL Server (sigh, for SQL
+					ignoring the de facto standard for .csv files, RFC 4180)
 		2018.01.15 NLM
 			*	Add documentation
 		2018.01.02 NLM (Nicole Lindner-Miles) 
@@ -197,324 +189,104 @@ BEGIN
 	END
 	
 
-	/* LOAD ICD-9
-			Dependent on @Which_ICD_Version_To_Load IN ('ALL', '9', '09')
+	/* Load all ICD diagnosis codes and their descriptions
 	=================================================================================== */
-	IF @Which_ICD_Version_To_Load IN ('ALL', '9', '09')
+	RAISERROR ('%s%s--- --- LOAD ICD DIAGNOSIS CODES --- ---', 0, 1, @NewLine, @NewLine) 
+
+	/**
+	 *  Create temporary table #CMS_ICD_Diag_Release_Map and populate it, conditional on 
+	 *  @Which_ICD_Version_To_Load, with the files that will be loaded here, and 
+	 *  the CMS release info (ICD version, CMS FY, and effective/end dates) for each file
+	 */
+	RAISERROR ('%s--- Create lookup table (to use in loop) with CMS fiscal years and the available source files with ICD diagnosis codes ---', 0, 1, @NewLine) 
+	
+	IF OBJECT_ID('tempdb..#CMS_ICD_Diag_Release_Map') IS NOT NULL
 	BEGIN
-		RAISERROR ('%s%s--- --- LOAD ICD-9 DIAGNOSIS CODES --- ---', 0, 1, @NewLine, @NewLine) 
-		/**
-		 *  Create temporary table #CMS_ICD9_Release_Map and populate it with the 
-		 *  ICD-9 CMS fiscal years (FY), and effective/end dates for all files loaded here
-		 *  along with the CMS ICD-9 code release version
-		 */
-		RAISERROR ('%s--- Create temp table with available ICD-9 FY files to import ---', 0, 1, @NewLine) 
-		IF OBJECT_ID('tempdb..#CMS_ICD9_Release_Map') IS NOT NULL
-		BEGIN
-			DROP TABLE #CMS_ICD9_Release_Map
-		END
-		CREATE TABLE #CMS_ICD9_Release_Map (
-			 CMS_Diag_Release_Version  VARCHAR(2)  NOT NULL
-			,CMS_Fiscal_Year           VARCHAR(4)  NOT NULL
-			,Effective_Date            DATE        NOT NULL
-			,End_Date                  DATE        NOT NULL
-		)
-		INSERT INTO #CMS_ICD9_Release_Map (
-			 CMS_Diag_Release_Version
-			,CMS_Fiscal_Year
-			,Effective_Date
-			,End_Date
-		)
-		VALUES
-			 ('28', '2011', '2010-10-01', '2011-09-30')
-			,('29', '2012', '2011-10-01', '2012-09-30')
-			,('30', '2013', '2012-10-01', '2013-09-30')
-			,('31', '2014', '2013-10-01', '2014-09-30')
-			,('32', '2015', '2014-10-01', '2015-09-30')
+		DROP TABLE #CMS_ICD_Diag_Release_Map
+	END
+	CREATE TABLE #CMS_ICD_Diag_Release_Map (
+		 ICD_Version		VARCHAR(2)		NOT NULL
+		,CMS_Fiscal_Year  VARCHAR(4) 		NOT NULL
+		,Effective_Date   DATE       		NOT NULL
+		,End_Date         DATE       		NOT NULL
+		,ICD_File_Name		VARCHAR(200)	NULL
+	);
 
-
-		/**
-		 *  Create temp table #CMS_ICD9_Diag_Desc_Files and populate it with both the 
-		 *  "short" and "long" code description files to load for each CMS fiscal year
-		 */
-		RAISERROR ('%s--- Create separate temp tables to store ICD-9 short and long descriptions ---', 0, 1, @NewLine) 
-		IF OBJECT_ID('tempdb..#CMS_ICD9_Diag_Desc_Files') IS NOT NULL
-		BEGIN
-			DROP TABLE #CMS_ICD9_Diag_Desc_Files
-		END
-		CREATE TABLE #CMS_ICD9_Diag_Desc_Files (
-			 CMS_Diag_Release_Version  VARCHAR(2)    NOT NULL
-			,Description_Type          VARCHAR(5)    NOT NULL
-			,CMS_File_Name             VARCHAR(100)  NOT NULL
-		)
-		INSERT INTO #CMS_ICD9_Diag_Desc_Files (
-			 CMS_Diag_Release_Version
-			,Description_Type
-			,CMS_File_Name
-		)
-		VALUES
-			 ('28', 'SHORT', 'CMS28_DESC_SHORT_DX.txt')
-			,('28', 'LONG', 'CMS28_DESC_LONG_DX.txt')
-			,('29', 'SHORT', 'CMS29_DESC_SHORT_DX.txt')
-			,('29', 'LONG', 'CMS29_DESC_LONG_DX.101111.txt')
-			,('30', 'SHORT', 'CMS30_DESC_SHORT_DX.txt')
-			,('30', 'LONG', 'CMS30_DESC_LONG_DX 080612.txt')
-			,('31', 'SHORT', 'CMS31_DESC_SHORT_DX.txt')
-			,('31', 'LONG', 'CMS31_DESC_LONG_DX.txt')
-			,('32', 'SHORT', 'CMS32_DESC_SHORT_DX.txt')
-			,('32', 'LONG', 'CMS32_DESC_LONG_DX.txt')
-		/*
-		SELECT 
-			 cmsInfo.CMS_Diag_Release_Version
-			,cmsInfo.CMS_Fiscal_Year
-			,cmsInfo.Effective_Date
-			,cmsInfo.End_Date
-			,cmsFile.Description_Type
-			,cmsFile.CMS_File_Name
-
-		FROM 
-			#CMS_ICD9_Diag_Desc_Files cmsFile
-			INNER JOIN #CMS_ICD9_Release_Map cmsInfo
-				ON cmsInfo.CMS_Diag_Release_Version = cmsFile.CMS_Diag_Release_Version
-		*/
-
-		/**
-		 *  Create temp tables #CMS_ICD9_Diag_Desc_Short and #CMS_ICD9_Diag_Desc_Long that 
-		 *  will be loaded from either the "short" or the "long" code description files
-		 */
-		IF OBJECT_ID('tempdb..#CMS_ICD9_Diag_Desc_Short') IS NOT NULL
-		BEGIN
-			DROP TABLE #CMS_ICD9_Diag_Desc_Short
-		END
-		CREATE TABLE #CMS_ICD9_Diag_Desc_Short (
-			 CMS_Diag_Release_Version   VARCHAR(2)  NOT NULL
-			,Diagnosis_Code             VARCHAR(5)  NOT NULL
-			,Code_Desc_Short            VARCHAR(60) NOT NULL
-		);
-
-		IF OBJECT_ID('tempdb..#CMS_ICD9_Diag_Desc_Long') IS NOT NULL
-		BEGIN
-			DROP TABLE #CMS_ICD9_Diag_Desc_Long
-		END
-		CREATE TABLE #CMS_ICD9_Diag_Desc_Long (
-			 CMS_Diag_Release_Version   VARCHAR(2)   NOT NULL
-			,Diagnosis_Code             VARCHAR(5)   NOT NULL
-			,Code_Desc_Long             VARCHAR(256) NOT NULL
-		);
-
-		/**
-		 *  Loop through all ICD-9 CMS FYs with a cursor, loading the temp tables
-		 *  with all available description files via OPENROWSET. For each CMS FY, must
-		 *  load both a short and a long description file.
-		 */
-		-- Parameters set within each cursor loop
-		DECLARE 
-			@This_File_Name_Desc_Short   VARCHAR(100),
-			@This_File_Name_Desc_Long    VARCHAR(100);
-		
-		-- Cursor parameters
-		DECLARE 
-			@This_ICD9_Diag_Release  VARCHAR(2),
-			@This_ICD9_CMS_FY        VARCHAR(4);
-
-		DECLARE Cursor_ICD9_CMS_Release CURSOR
-		LOCAL READ_ONLY FORWARD_ONLY
-		FOR
-		SELECT 
-			CMS_Diag_Release_Version,
-			CMS_Fiscal_Year
-		FROM #CMS_ICD9_Release_Map
-		 
-		OPEN Cursor_ICD9_CMS_Release 
-		FETCH NEXT 
-		FROM Cursor_ICD9_CMS_Release 
-		INTO 
-			@This_ICD9_Diag_Release,
-			@This_ICD9_CMS_FY
-		WHILE @@FETCH_STATUS = 0
-		BEGIN
-
-			RAISERROR ('%s--- Loading ICD-9 diagnosis codes for CMS FY %s ---', 0, 1, @NewLine, @This_ICD9_CMS_FY) 
-			-- Clear parameters from previous loop iterations and then set
-			SET @This_File_Name_Desc_Short = NULL;
-			SET @This_File_Name_Desc_Long = NULL;
-
-			SET @This_File_Name_Desc_Short = (
-				SELECT CMS_File_Name
-				FROM #CMS_ICD9_Diag_Desc_Files
-				WHERE CMS_Diag_Release_Version = @This_ICD9_Diag_Release
-						AND Description_Type = 'SHORT'
-			);
-
-			SET @This_File_Name_Desc_Long = (
-				SELECT CMS_File_Name
-				FROM #CMS_ICD9_Diag_Desc_Files
-				WHERE CMS_Diag_Release_Version = @This_ICD9_Diag_Release
-						AND Description_Type = 'LONG'
-			);
-
-			RAISERROR ('--- Loading SHORT descriptions from file %s ---', 0, 1, @This_File_Name_Desc_Short) 
-			SET @SQL = '
-			INSERT INTO #CMS_ICD9_Diag_Desc_Short (
-				 CMS_Diag_Release_Version
-				,Diagnosis_Code
-				,Code_Desc_Short
-			)
-			SELECT 
-				 ''' + @This_ICD9_Diag_Release + ''' AS CMS_Diag_Release_Version
-				,SUBSTRING(REPLACE(LTRIM(RTRIM(src.Diagnosis_Code)), CHAR(13), ''''), 1, 5) AS Diagnosis_Code
-				,SUBSTRING(REPLACE(LTRIM(RTRIM(src.Code_Desc_Short)), CHAR(13), ''''), 1, 60) AS Code_Desc_Short
-			FROM OPENROWSET(
-				BULK ''' + @Source_File_Dir + '\ICD9_CM\' + @This_File_Name_Desc_Short
-				+ '''
-				,FORMATFILE = ''' + @Source_File_Dir + '\ICD9_CM\icd9dx_desc_short_format.fmt'
-				+ '''
-				,ERRORFILE = ''' + @Source_File_Dir + '\ICD9_CM\Errorfile_ICD9_Diag_Desc_Short_CMS' + @This_ICD9_Diag_Release + '.err'''
-				+ '
-				,FIRSTROW = 1
-			) AS src
-			;'
-
-			EXEC (@SQL)
-
-			RAISERROR ('--- Loading LONG  descriptions from file %s ---', 0, 1, @This_File_Name_Desc_Long) 
-			SET @SQL = '
-			INSERT INTO #CMS_ICD9_Diag_Desc_Long (
-				 CMS_Diag_Release_Version
-				,Diagnosis_Code
-				,Code_Desc_Long
-			)
-			SELECT 
-				 ''' + @This_ICD9_Diag_Release + ''' AS CMS_Diag_Release_Version
-				,SUBSTRING(REPLACE(LTRIM(RTRIM(src.Diagnosis_Code)), CHAR(13), ''''), 1, 5) AS Diagnosis_Code
-				,SUBSTRING(REPLACE(LTRIM(RTRIM(src.Code_Desc_Long)), CHAR(13), ''''), 1, 323) AS Code_Desc_Long
-			FROM OPENROWSET(
-				BULK ''' + @Source_File_Dir + '\ICD9_CM\' + @This_File_Name_Desc_Long
-				+ '''
-				,FORMATFILE = ''' + @Source_File_Dir + '\ICD9_CM\icd9dx_desc_long_format.fmt'
-				+ '''
-				,ERRORFILE = ''' + @Source_File_Dir + '\ICD9_CM\Errorfile_ICD9_Diag_Desc_Long_CMS' + @This_ICD9_Diag_Release + '.err'''
-				+ '
-				,FIRSTROW = 1
-			) AS src
-			;'
-
-			EXEC (@SQL)
-
-			FETCH NEXT 
-			FROM Cursor_ICD9_CMS_Release 
-			INTO 
-				@This_ICD9_Diag_Release,
-				@This_ICD9_CMS_FY
-		END
-		CLOSE Cursor_ICD9_CMS_Release 
-		DEALLOCATE Cursor_ICD9_CMS_Release 
-
-		/**
-		 *  Load the permanent output table with ICD-9 codes and descriptions
-		 */
-		RAISERROR ('%s--- Inserting all ICD-9 diagnosis codes ---', 0, 1, @NewLine) 
-
-		SET @SQL = '
-		INSERT INTO ' + @Schema_Name + '.' + @Table_Name + '(
+	IF @Which_ICD_Version_To_Load IN ('ALL', '10')
+	BEGIN
+		INSERT INTO #CMS_ICD_Diag_Release_Map (
 			 ICD_Version
 			,CMS_Fiscal_Year
 			,Effective_Date
 			,End_Date
-			,Diagnosis_Code
-			,Code_Desc_Short
-			,Code_Desc_Long
+			--,ICD_File_Name Not required for ICD-10. Has a standard naming convention
 		)
+		VALUES
+			 ('10', '2016', '2015-10-01', '2016-09-30', 'icd10cm_order_2016.txt')
+			,('10', '2017', '2016-10-01', '2017-09-30', 'icd10cm_order_2017.txt')
+			,('10', '2018', '2017-10-01', '2018-09-30', 'icd10cm_order_2018.txt')
+	END
 
-		SELECT 
-			 9 AS Icd_Version
-			,cmsInfo.CMS_Fiscal_Year
-			,cmsInfo.Effective_Date
-			,cmsInfo.End_Date
-			,combineDesc.Diagnosis_Code
-			,combineDesc.Code_Desc_Short
-			,combineDesc.Code_Desc_Long
-		FROM 
-			#CMS_ICD9_Release_Map cmsInfo
-			INNER JOIN (
-				SELECT 
-					ISNULL(dxS.CMS_Diag_Release_Version, dxL.CMS_Diag_Release_Version) AS CMS_Diag_Release_Version
-					,ISNULL(dxS.Diagnosis_Code, dxL.Diagnosis_Code) AS Diagnosis_Code
-					,dxS.Code_Desc_Short
-					,dxL.Code_Desc_Long
-				FROM 
-					#CMS_ICD9_Diag_Desc_Short dxS
-					FULL JOIN #CMS_ICD9_Diag_Desc_Long dxL
-						ON dxS.CMS_Diag_Release_Version = dxL.CMS_Diag_Release_Version
-						AND dxS.Diagnosis_Code = dxL.Diagnosis_Code
-			) combineDesc
-				ON combineDesc.CMS_Diag_Release_Version = cmsInfo.CMS_Diag_Release_Version
-		;'
-		EXEC (@SQL)
+	IF @Which_ICD_Version_To_Load IN ('ALL', '09', '9')
+	BEGIN
+		INSERT INTO #CMS_ICD_Diag_Release_Map (
+			 ICD_Version
+			,CMS_Fiscal_Year
+			,Effective_Date
+			,End_Date
+			,ICD_File_Name
+		)
+		VALUES
+			 ('9', '2010', '2009-10-01', '2010-09-30', 'V27LONG_SHORT_DX_110909u021012 Sheet1.txt')
+			,('9', '2011', '2010-10-01', '2011-09-30', 'CMS28_DESC_LONG_SHORT_DX Sheet1.txt')
+			,('9', '2012', '2011-10-01', '2012-09-30', 'CMS29_DESC_LONG_SHORT_DX 101111u021012 Sheet1.txt')
+			,('9', '2013', '2012-10-01', '2013-09-30', 'CMS30_DESC_LONG_SHORT_DX 080612 Sheet1.txt')
+			,('9', '2014', '2013-10-01', '2014-09-30', 'CMS31_DESC_LONG_SHORT_DX Sheet1.txt')
+			,('9', '2015', '2014-10-01', '2015-09-30', 'CMS32_DESC_LONG_SHORT_DX Sheet1.txt')
 	END
 
 
-	/* LOAD ICD-10
-			Dependent on @Which_ICD_Version_To_Load IN ('ALL', '10')
-	=================================================================================== */
-	IF @Which_ICD_Version_To_Load IN ('ALL', '10')
+	/**
+	 *  Loop through all ICD CMS FYs with a cursor, loading the permanent output 
+	 *  table with all available description files via OPENROWSET.
+	 */
+	DECLARE 
+		@This_ICD_Version		  VARCHAR(2),
+		@This_CMS_FY           VARCHAR(4),
+		@This_Effective_Date   VARCHAR(10),
+		@This_End_Date         VARCHAR(10),
+		@This_ICD_File_Name	  VARCHAR(200)
+	;
+	DECLARE Cursor_CMS_Release CURSOR
+	LOCAL READ_ONLY FORWARD_ONLY
+	FOR
+	SELECT 
+		ICD_Version,
+		CMS_Fiscal_Year,
+		CAST(Effective_Date AS VARCHAR(10)) AS Effective_Date,
+		CAST(End_Date AS VARCHAR(10)) AS End_Date,
+		ICD_File_Name
+	FROM #CMS_ICD_Diag_Release_Map
+	ORDER BY 
+		CMS_Fiscal_Year
+	 
+	OPEN Cursor_CMS_Release 
+	FETCH NEXT 
+	FROM Cursor_CMS_Release 
+	INTO 
+		@This_ICD_Version,
+		@This_CMS_FY,
+		@This_Effective_Date,
+		@This_End_Date,
+		@This_ICD_File_Name
+
+	WHILE @@FETCH_STATUS = 0
 	BEGIN
-		RAISERROR ('%s%s--- --- LOAD ICD-10 DIAGNOSIS CODES --- ---', 0, 1, @NewLine, @NewLine) 
 
-		/**
-		 *  Create temporary table #CMS_ICD10_Release_Map and populate it with the 
-		 *  ICD-10 CMS FYs, and effective/end dates for all files loaded here
-		 */
-		RAISERROR ('%s--- Create temp table with available ICD-10 FY files to import ---', 0, 1, @NewLine) 
-		IF OBJECT_ID('tempdb..#CMS_ICD10_Release_Map') IS NOT NULL
+		RAISERROR ('%s--- Inserting ICD-%s diagnosis codes for CMS FY %s ---', 0, 1, @NewLine, @This_ICD_Version, @This_CMS_FY) 
+
+		IF @This_ICD_Version = 9
 		BEGIN
-			DROP TABLE #CMS_ICD10_Release_Map
-		END
-		CREATE TABLE #CMS_ICD10_Release_Map (
-			 CMS_Fiscal_Year   VARCHAR(4) NOT NULL
-			,Effective_Date    DATE       NOT NULL
-			,End_Date          DATE       NOT NULL
-		);
-
-		INSERT INTO #CMS_ICD10_Release_Map (
-			 CMS_Fiscal_Year
-			,Effective_Date
-			,End_Date
-		)
-		VALUES
-			 ('2016', '2015-10-01', '2016-09-30')
-			,('2017', '2016-10-01', '2017-09-30')
-			,('2018', '2017-10-01', '2018-09-30')
-
-
-		/**
-		 *  Loop through all ICD-10 CMS FYs with a cursor, loading the permanent output 
-		 *  table with all available description files via OPENROWSET.
-		 */
-		DECLARE 
-			@This_ICD10_CMS_FY           VARCHAR(4),
-			@This_ICD10_Effective_Date   VARCHAR(10),
-			@This_ICD10_End_Date         VARCHAR(10)
-		;
-		DECLARE Cursor_ICD10_CMS_Release CURSOR
-		LOCAL READ_ONLY FORWARD_ONLY
-		FOR
-		SELECT 
-			CMS_Fiscal_Year,
-			CAST(Effective_Date AS VARCHAR(10)) AS Effective_Date,
-			CAST(End_Date AS VARCHAR(10)) AS End_Date
-		FROM #CMS_ICD10_Release_Map
-		 
-		OPEN Cursor_ICD10_CMS_Release 
-		FETCH NEXT 
-		FROM Cursor_ICD10_CMS_Release 
-		INTO 
-			@This_ICD10_CMS_FY,
-			@This_ICD10_Effective_Date,
-			@This_ICD10_End_Date
-		WHILE @@FETCH_STATUS = 0
-		BEGIN
-			RAISERROR ('%s--- Inserting ICD-10 diagnosis codes for CMS FY %s ---', 0, 1, @NewLine, @This_ICD10_CMS_FY) 
 
 			SET @SQL = '
 			INSERT INTO ' + @Schema_Name + '.' + @Table_Name + '(
@@ -527,37 +299,78 @@ BEGIN
 				,Code_Desc_Long
 			)
 			SELECT 
-				 10 AS ICD_Version
-				,' + @This_ICD10_CMS_FY + ' AS CMS_Fiscal_Year
-				,''' + @This_ICD10_Effective_Date + ''' AS Effective_Date
-				,''' + @This_ICD10_End_Date + ''' AS End_Date
+				' + @This_ICD_Version + ' AS ICD_Version
+				,' + @This_CMS_FY + ' AS CMS_Fiscal_Year
+				,''' + @This_Effective_Date + ''' AS Effective_Date
+				,''' + @This_End_Date + ''' AS End_Date
+				,SUBSTRING(LTRIM(RTRIM(src.Diagnosis_Code)), 1, 5) AS Diagnosis_Code
+				,SUBSTRING(LTRIM(RTRIM(REPLACE(src.Code_Desc_Short, ''""'', ''"''))), 1, 60) AS Code_Desc_Short
+				,SUBSTRING(LTRIM(RTRIM(REPLACE(src.Code_Desc_Long, ''""'', ''"''))), 1, 323) AS Code_Desc_Long
+			FROM OPENROWSET(
+				BULK ''' + @Source_File_Dir + '\ICD9_CM\' + @This_ICD_File_Name
+				+ '''
+				,FORMATFILE = ''' + @Source_File_Dir + '\ICD9_CM\icd9cm_format.fmt'
+				+ '''
+				,ERRORFILE = ''' + @Source_File_Dir + '\ICD9_CM\Errorfile_Diag_FY' + @This_CMS_FY + '.err'''
+				+ '
+				,FIRSTROW = 2
+				,CODEPAGE = 65001
+			) AS src 
+			
+			;'
+
+			EXEC (@SQL)
+		END
+
+		ELSE IF @This_ICD_Version = 10
+		BEGIN
+
+			SET @SQL = '
+			INSERT INTO ' + @Schema_Name + '.' + @Table_Name + '(
+				 ICD_Version
+				,CMS_Fiscal_Year
+				,Effective_Date
+				,End_Date
+				,Diagnosis_Code
+				,Code_Desc_Short
+				,Code_Desc_Long
+			)
+			SELECT 
+				' + @This_ICD_Version + ' AS ICD_Version
+				,' + @This_CMS_FY + ' AS CMS_Fiscal_Year
+				,''' + @This_Effective_Date + ''' AS Effective_Date
+				,''' + @This_End_Date + ''' AS End_Date
 				,SUBSTRING(LTRIM(RTRIM(src.Diagnosis_Code)), 1, 7) AS Diagnosis_Code
 				,SUBSTRING(LTRIM(RTRIM(src.Code_Desc_Short)), 1, 60) AS Code_Desc_Short
 				,SUBSTRING(LTRIM(RTRIM(src.Code_Desc_Long)), 1, 323) AS Code_Desc_Long
 			FROM OPENROWSET(
-				BULK ''' + @Source_File_Dir + '\ICD10_CM\icd10cm_order_' + @This_ICD10_CMS_FY + '.txt'
+				BULK ''' + @Source_File_Dir + '\ICD10_CM\' + @This_ICD_File_Name
 				+ '''
 				,FORMATFILE = ''' + @Source_File_Dir + '\ICD10_CM\icd10cm_order_format.fmt'
 				+ '''
-				,ERRORFILE = ''' + @Source_File_Dir + '\ICD10_CM\Errorfile_ICD10_Diag_FY' + @This_ICD10_CMS_FY + '.err'''
+				,ERRORFILE = ''' + @Source_File_Dir + '\ICD10_CM\Errorfile_Diag_FY' + @This_CMS_FY + '.err'''
 				+ '
 				,FIRSTROW = 1
-			) AS src
-			WHERE
+			) AS src 
+			WHERE 
 				Code_Is_HIPAA_Valid = ''1''
 			;'
+
 			EXEC (@SQL)
-				
-				FETCH NEXT 
-				FROM Cursor_ICD10_CMS_Release 
-				INTO 
-					@This_ICD10_CMS_FY,
-					@This_ICD10_Effective_Date,
-					@This_ICD10_End_Date
+
 		END
-		CLOSE Cursor_ICD10_CMS_Release 
-		DEALLOCATE Cursor_ICD10_CMS_Release 
+
+		FETCH NEXT 
+		FROM Cursor_CMS_Release 
+		INTO 
+			@This_ICD_Version,
+			@This_CMS_FY,
+			@This_Effective_Date,
+			@This_End_Date,
+			@This_ICD_File_Name
 	END
+	CLOSE Cursor_CMS_Release 
+	DEALLOCATE Cursor_CMS_Release 
 
 END
 
