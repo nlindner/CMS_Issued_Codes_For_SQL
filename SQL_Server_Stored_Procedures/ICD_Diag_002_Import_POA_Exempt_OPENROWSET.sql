@@ -27,22 +27,22 @@ BEGIN
 		ICD_Diag_002_Import_POA_Exempt_OPENROWSET
 
 	DESCRIPTION
+		*	See repo LICENSE and see repo README for details and sources for data loaded here
+			*	See the repo README for an explanation of why FY 2012 is loaded for both 2012
+				and 2013 and the manual process required to create the FY 2011 file from 
+				the PDF available at cms.gov
+		*	Loads table with ICD-9 and ICD-10 diagnosis codes exempt from Present on 
+			Admission (POA) reporting, based on files available for download from cms.gov, 
+			for CMS Fiscal Years (FY) 2011-2018
 		*	This is the simple (OPENROWSET) method to import this info.
 			dbo.ICD_Diag_002_Import_POA_Exempt_AsValues does exactly the same thing,
 			but does not require OPENROWSET permissions (i.e., ADMINISTER BULK OPERATIONS)
-		*	This imports flat files, available for download from cms.gov, with ICD-9 and 
-			ICD-10 diagnosis codes that are exempt from Present on Arrival (POA) reporting
-		*	See the repo README for an explanation of why FY 2013 is unavailable and
-			the manual process required to create the FY 2011 file from the PDF available
-			at cms.gov
 		*	This is designed to load those flat files to a SQL Server table. In the bulk load
 			process, additional standardization is being applied as the files are loaded.
 			*	the ICD-10 POA files surround the Code_Desc_Long with double-quotes as
 				text qualifiers to escape special characters. SQL Server does not recognize 
 				that feature of the de facto .csv file standard, so a REPLACE() function 
 				is used to strip those out during load.
-
-		*	See repo LICENSE and see repo README for details and sources for files loaded here
 
 	PARAMETERS
 		@Schema_Name (Required, if other than default of 'dbo')
@@ -64,16 +64,12 @@ BEGIN
 			subdirectory
 
 	WHAT THIS PROCEDURE DOES
-		*	Dependent on which @Table_Action is invoked, this will either
-			'DROP_CREATE': Create permanent output table for POA-exempt ICD diagnosis codes,
-			dropping the table if it already exists
-			'TRUNCATE': TRUNCATE the existing output table
-			'DELETE_ICD9': Delete any ICD-9 codes from the existing output table
-			'DELETE_ICD10': Delete any ICD-10 codes from the existing output table
-		*	Create temporary table #CMS_FY_Release_Map and populate it, conditional on 
-			@Which_ICD_Version_To_Load, with the files that will be loaded here, and the 
-			CMS release info (ICD version, CMS FY, and effective/end dates) for each file
+		*	Dependent on which @Table_Action is invoked, prepare the permanent output 
+			table (@Schema_Name.@Table_Name), via either DROP_CREATE, TRUNCATE, 
+			DELETE_ICD9, or DELETE_ICD10
 		*	Load all ICD diagnosis codes that are exempt from POA reporting
+			*	Create temporary table #CMS_FY_Release_Map and populate it with all CMS FYs
+				and effective/end dates to be loaded here, per @Which_ICD_Version_To_Load
 			*	Loop through all ICD CMS FYs with a cursor, loading the permanent output 
 				table with all available POA-exempt files via OPENROWSET.
 			*	Standardize what is available in the output table because of differences
@@ -89,6 +85,10 @@ BEGIN
 			'C:\Users\Nicole\Documents\GitHub\CMS_MS_DRG_Grouper_Help\CMS_ICD_Diagnoses_POA_Exempt'
 
 	CHANGE LOG
+		2018.02.18 NLM
+			*	After search on archive.org (see repo README), added FY 2013
+				Revised documentation here as part of releasing _AsValues version
+				of this SP
 		2018.02.11 NLM
 			*	Added documentation and added all ICD-9 POA exempt lists that I could find.
 		2018.01.02 NLM (Nicole Lindner-Miles) 
@@ -107,15 +107,13 @@ BEGIN
 	DECLARE @SQL VARCHAR(MAX);
 
 	/**
-	 *  Dependent on which @Table_Action is invoked, this will either
-	 *  'DROP_CREATE': Create permanent output table for POA-exempt ICD diagnosis codes,
-	 *  dropping the table if it already exists
-	 *  'TRUNCATE': TRUNCATE the existing output table
-	 *  'DELETE_ICD9': Delete any ICD-9 codes from the existing output table
-	 *  'DELETE_ICD10': Delete any ICD-10 codes from the existing output table
+	 *  Dependent on which @Table_Action is invoked, prepare the permanent output 
+	 *  table (@Schema_Name.@Table_Name), via either DROP_CREATE, TRUNCATE, 
+	 *  DELETE_ICD9, or DELETE_ICD10
 	 */
 
 	RAISERROR ('%s--- Prep final output table %s.%s via %s ---', 0, 1, @NewLine, @Schema_Name, @Table_Name, @Table_Action) 
+
 	IF @Table_Action = 'DROP_CREATE'
 	BEGIN
 		RAISERROR ('--- Drop (if it already exists) and recreate ---', 0, 1) 
@@ -181,12 +179,11 @@ BEGIN
 	RAISERROR ('%s%s--- --- LOAD POA-EXEMPT ICD DIAGNOSIS CODES --- ---', 0, 1, @NewLine, @NewLine) 
 
 	/**
-	 *  Create temporary table #CMS_FY_Release_Map and populate it, conditional on 
-	 *  @Which_ICD_Version_To_Load, with the files that will be loaded here, and the 
-	 *  CMS release info (ICD version, CMS FY, and effective/end dates) for each file
+	 *  Create temporary table #CMS_FY_Release_Map and populate it with all CMS FYs
+	 *  and effective/end dates to be loaded here, per @Which_ICD_Version_To_Load
 	 */
 
-	RAISERROR ('%s--- Create lookup table (to use in loop) with CMS fiscal years and the available source files with ICD diagnosis codes that are exempt from POA reporting ---', 0, 1, @NewLine) 
+	RAISERROR ('%s--- Create temp table with CMS FYs that will be loaded here ---', 0, 1, @NewLine) 
 
 	IF OBJECT_ID('tempdb..#CMS_FY_Release_Map') IS NOT NULL
 	BEGIN
@@ -227,12 +224,10 @@ BEGIN
 		VALUES
 			 ('9', '2011', '2010-10-01', '2011-09-30', 'POA_Exempt_Per_CMS_Transmittal_R756OTN_Oct12010_FY2011.txt')
 			,('9', '2012', '2011-10-01', '2012-09-30', 'POA_Exempt_Diagnosis_Codes_Oct12011_FY2012.txt')
-			-- Havent found source yet,('9', '2013', '2012-10-01', '2013-09-30', '')
+			,('9', '2013', '2012-10-01', '2013-09-30', 'POA_Exempt_Diagnosis_Codes_Oct12011_FY2012.txt')
 			,('9', '2014', '2013-10-01', '2014-09-30', 'POA_Exempt_Diagnosis_Codes_Oct12013_FY2014.txt')
 			,('9', '2015', '2014-10-01', '2015-09-30', 'ICD-9_POA_Exempt_Diagnosis_Codes_Oct12014_FY2015.txt')
 	END
-
-	RAISERROR ('%s--- Create temp table to store raw loaded codes ---', 0, 1, @NewLine) 
 
 	/**
 	 *  Loop through all ICD CMS FYs with a cursor, loading the permanent output 

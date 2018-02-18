@@ -23,7 +23,7 @@ No infringement is intended on the existing rights for the MS DRG Grouper and Me
   * File format available here (see SPs for how to import them):
 	  * .\ICD9_CM: one file, bar-delimited format, with both short and long descriptions,
 	  	with double-quotes surrounding every field
-	  * .\ICD10_CM: one file, fixed-width format, with both short and long descriptions. The fixed-width format means that no delimiters exist. To account for that, the .fmt file has placeholders (Filler_##) for them, but does not load  them to the permanent output table
+	  * .\ICD10_CM: one file, fixed-width format, with both short and long descriptions. The fixed-width format means that no delimiters exist. To account for that, the .fmt file has placeholders (Filler_##) for them, but does not load them to the permanent output table
 
 | CMS FY | ICD Version | Source File for CMS Diagnosis Descriptions Is (ICD-9 from [ICD-9-CM Diagnosis and Procedure Codes: Abbreviated and Full Code Titles](https://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/codes.html)) |
 | ------ | ----------- | ------------   |
@@ -41,10 +41,9 @@ No infringement is intended on the existing rights for the MS DRG Grouper and Me
 ### Sources for CMS POA Exempt Diagnoses
   * This contains CMS-issued lists of ICD diagnosis codes that are exempt from Present On Admission (POA) reporting, read in via one of the ICD_Diag_002_Import_POA_Exempt... SPs. 
   * The files for CMS FY 2015-2018 listed in the table below are available here https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/HospitalAcqCond/Coding.html 
-    * Note that only fiscal years 2015-2018 are listed there and 2015 was the last CMS release for ICD-9, so I had to hunt for the ICD-9-CM POA-exempt diagnosis codes. 
-    * I cannot locate a release for FY 2013, so this SP does not load anything for it. 
-    * I believe, but cannot be certain, that the POA exempt list for FY 2013 matches the FY 2012, 2014, and 2015 ICD-9 exempt lists. The POA exempt code releases for FY 2012, 2014, and 2015 are all identical and there was a partial code freeze during this time period (note [no new or revised or deleted ICD-9-CMS diagnosis codes for FY 2013 and 2014](https://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/summarytables.html))
-    * In the files available at CMS.gov, the ICD-9-CM POA files contain ICD diagnosis codes without a period, while the ICD-10-CM files contain ICD diagnosis codes WITH a period. Because of that, the SQL Server stored procedure that loads these files adds the diagnosis code with a period, based on the CMS documentation on the format of [ICD-9-CM diagnosis codes](https://www.cms.gov/Medicare/Quality-Initiatives-Patient-Assessment-Instruments/HospitalQualityInits/Downloads/HospitalAppendix_F.pdf)).
+    * Note that only fiscal years 2015-2018 are listed there and 2015 was the last CMS release for ICD-9, so I had to hunt for the other ICD-9-CM POA-exempt diagnosis codes. 
+    * FY 2013: This is hard to find on the interwebs. I finally located in on archive.org, as a [2012-10-08 snapshot](https://web.archive.org/web/20121008004658/https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/HospitalAcqCond/Coding.html) of the HAC Coding page. The POA exempt zip archive downloaded from there contained a single file, named "POA_Exempt_Diagnosis_Codes_Oct12011_FY2012(no changes for FY 2013).txt". Just for fun, I compared that file and it indeed contained no changes. For that reason, I am loading the same file, POA_Exempt_Diagnosis_Codes_Oct12011_FY2012.txt for both 2012 and 2013. 
+    * In the files available at CMS.gov, the ICD-9-CM POA files contain ICD diagnosis codes without a period, while the ICD-10-CM files contain ICD diagnosis codes WITH a period. Because of that, the SQL Server stored procedure that loads these files adds the diagnosis code with a period, based on the CMS documentation on the format of [ICD-9-CM diagnosis codes](https://www.cms.gov/Medicare/Quality-Initiatives-Patient-Assessment-Instruments/HospitalQualityInits/Downloads/HospitalAppendix_F.pdf).
 
 | CMS FY | ICD Version | Source File for CMS POA Exempt Is |
 | ------ | ----------- | ------------   |
@@ -53,9 +52,8 @@ No infringement is intended on the existing rights for the MS DRG Grouper and Me
 | 2016 | 10 | [FY 2016 Present On Admission (POA) Exempt List](https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2016-POA-Exempt-List.zip) --> POAexemptCodes2016.txt |
 | 2015 | 9 | [FY 2015 ICD-9-CM Present On Admission (POA) Exempt List](https://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/Downloads/FY2015-ICD9-POA-Exempt-List.zip) --> ICD-9_POA_Exempt_Diagnosis_Codes_Oct12014_FY2015.txt |
 | 2014 | 9 | Release not listed on CMS, but available via [direct download](https://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/Downloads/FY2014-ICD9-POA-Exempt-List.zip) --> ICD-POA_Exempt_Diagnosis_Codes_Oct12013_FY2014.txt |
-| 2013 | 9 | Can't locate anywhere. |
-| 2012 | 9 | Release not listed on CMS, but available via [direct download](http://www.cms.gov/HospitalAcqCond/Downloads/POA_Exempt_Diagnosis_Codes.zip) --> POA_Exempt_Diagnosis_Codes_Oct12011_FY2012.txt |
-| 2011 | 9 | Manually created list from "Attachment" (Under Categories and Codes Exempt from Diagnosis Present on Admission Requirement Effective Date: October 1, 2010) of [CMS Transmittal R756OTN](https://www.cms.gov/Regulations-and-Guidance/Guidance/Transmittals/Downloads/R756OTN.pdf). Validated this (or rather, differences between it and the FY2012 file) against the POA code changes specified for FY 2012, as "Update to the Fiscal Year (FY) 2012 List of Codes Exempt from Reporting Present on Admission" in CMS transmittal [R1019OTN](https://www.cms.gov/Regulations-and-Guidance/Guidance/Transmittals/downloads/r1019otn.pdf) |
+| 2012 - 2013 | 9 | Release not listed on CMS, but available via [direct download](http://www.cms.gov/HospitalAcqCond/Downloads/POA_Exempt_Diagnosis_Codes.zip) --> POA_Exempt_Diagnosis_Codes_Oct12011_FY2012.txt |
+| 2011 | 9 | Manually created list from "Attachment" (Under Categories and Codes Exempt from Diagnosis Present on Admission Requirement Effective Date: October 1, 2010) of [CMS Transmittal R756OTN](https://www.cms.gov/Regulations-and-Guidance/Guidance/Transmittals/Downloads/R756OTN.pdf). Validated this (or rather, differences between it and the FY 2012 file) against the POA code changes specified for FY 2012, as "Update to the Fiscal Year (FY) 2012 List of Codes Exempt from Reporting Present on Admission" in CMS transmittal [R1019OTN](https://www.cms.gov/Regulations-and-Guidance/Guidance/Transmittals/downloads/r1019otn.pdf) |
 
 
 ## CMS_MCE_Simple_ICD_Code_Exclusions
