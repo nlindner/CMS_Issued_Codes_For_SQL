@@ -13,7 +13,7 @@ ALTER PROCEDURE dbo.ICD_Diag_002_Import_POA_Exempt_OPENROWSET (
 	 @Schema_Name VARCHAR(32) = 'dbo'
 	,@Table_Name VARCHAR(100) = 'DIM_ICD_Diagnosis_POA_Exempt'
 	,@Table_Action VARCHAR(16) = 'DROP_CREATE' -- available: DROP_CREATE, TRUNCATE, DELETE_ICD9, DELETE_ICD10
-	,@Which_ICD_Version_To_Load VARCHAR(4) = 'ALL'
+	,@Which_ICD_Version_To_Load VARCHAR(3) = 'ALL'
 	,@Source_File_Dir VARCHAR(1000) = NULL
 ) AS
 
@@ -69,7 +69,7 @@ BEGIN
 			DELETE_ICD9, or DELETE_ICD10
 		*	Load all ICD diagnosis codes that are exempt from POA reporting
 			*	Create temporary table #CMS_FY_Release_Map and populate it with all CMS FYs
-				and effective/end dates to be loaded here, per @Which_ICD_Version_To_Load
+				and effective/end dates to be loaded, per @Which_ICD_Version_To_Load
 			*	Loop through all ICD CMS FYs with a cursor, loading the permanent output 
 				table with all available POA-exempt files via OPENROWSET.
 			*	Standardize what is available in the output table because of differences
@@ -86,9 +86,16 @@ BEGIN
 
 	CHANGE LOG
 		2018.02.18 NLM
+			*	Sigh. Added code to uppercase all ICD diagnosis codes because the
+				ICD-9 files themselves have lowercase v instead of uppercase v.
+				Does not affect SQL Server (defaults to case-insensitive), but this
+				would cause problems for most other SQL dialects
 			*	After search on archive.org (see repo README), added FY 2013
 				Revised documentation here as part of releasing _AsValues version
 				of this SP
+			*	Minor changes to documentation (and spacing), to align similar code logic
+				between this and the ICD_Diag_001_Import_Descriptions SPs, to prep
+				for adding ICD procedure codes to this repo
 		2018.02.11 NLM
 			*	Added documentation and added all ICD-9 POA exempt lists that I could find.
 		2018.01.02 NLM (Nicole Lindner-Miles) 
@@ -106,12 +113,13 @@ BEGIN
 	DECLARE @NewLine CHAR(2) = CHAR(10) + CHAR(10);
 	DECLARE @SQL VARCHAR(MAX);
 
+
+
 	/**
 	 *  Dependent on which @Table_Action is invoked, prepare the permanent output 
 	 *  table (@Schema_Name.@Table_Name), via either DROP_CREATE, TRUNCATE, 
 	 *  DELETE_ICD9, or DELETE_ICD10
 	 */
-
 	RAISERROR ('%s--- Prep final output table %s.%s via %s ---', 0, 1, @NewLine, @Schema_Name, @Table_Name, @Table_Action) 
 
 	IF @Table_Action = 'DROP_CREATE'
@@ -129,7 +137,7 @@ BEGIN
 			,Effective_Date               DATE           NOT NULL
 			,End_Date                     DATE           NOT NULL
 			,Diagnosis_Code               VARCHAR(7)     NOT NULL
-			,Diagnosis_Code_With_Period   VARCHAR(8)     NULL
+			,Diagnosis_Code_With_Period   VARCHAR(8)     NULL -- Will change to NOT NULL at end of SP
 			,Code_Desc_Long               VARCHAR(323)   NOT NULL
 			,CONSTRAINT PK_' + @Table_Name + ' PRIMARY KEY (
 				 CMS_Fiscal_Year
@@ -174,15 +182,15 @@ BEGIN
 	END
 
 
+
 	/* Load all ICD diagnosis codes that are exempt from POA reporting
 	=================================================================================== */
 	RAISERROR ('%s%s--- --- LOAD POA-EXEMPT ICD DIAGNOSIS CODES --- ---', 0, 1, @NewLine, @NewLine) 
 
 	/**
 	 *  Create temporary table #CMS_FY_Release_Map and populate it with all CMS FYs
-	 *  and effective/end dates to be loaded here, per @Which_ICD_Version_To_Load
+	 *  and effective/end dates to be loaded, per @Which_ICD_Version_To_Load
 	 */
-
 	RAISERROR ('%s--- Create temp table with CMS FYs that will be loaded here ---', 0, 1, @NewLine) 
 
 	IF OBJECT_ID('tempdb..#CMS_FY_Release_Map') IS NOT NULL
@@ -190,11 +198,11 @@ BEGIN
 		DROP TABLE #CMS_FY_Release_Map
 	END
 	CREATE TABLE #CMS_FY_Release_Map (
-		 ICD_Version				VARCHAR(2)     NOT NULL
-		,CMS_Fiscal_Year        VARCHAR(4)     NOT NULL
+		 ICD_Version				INT            NOT NULL
+		,CMS_Fiscal_Year        INT            NOT NULL
 		,Effective_Date         DATE       		NOT NULL
 		,End_Date               DATE       		NOT NULL
-		,POA_File_Name          VARCHAR(200)   NOT NULL
+		,CMS_File_Name          VARCHAR(200)   NOT NULL
 	)
 
 	IF @Which_ICD_Version_To_Load IN ('ALL', '10')
@@ -204,12 +212,12 @@ BEGIN
 			,CMS_Fiscal_Year
 			,Effective_Date
 			,End_Date
-			,POA_File_Name
+			,CMS_File_Name
 		)
 		VALUES
-			 ('10', '2016', '2015-10-01', '2016-09-30', 'POAexemptcodes2016.txt')
-			,('10', '2017', '2016-10-01', '2017-09-30', 'POAexemptcodes2017.txt')
-			,('10', '2018', '2017-10-01', '2018-09-30', 'POAexemptcodes2018.txt')
+			 (10, 2016, '2015-10-01', '2016-09-30', 'POAexemptcodes2016.txt')
+			,(10, 2017, '2016-10-01', '2017-09-30', 'POAexemptcodes2017.txt')
+			,(10, 2018, '2017-10-01', '2018-09-30', 'POAexemptcodes2018.txt')
 	END
 
 	IF @Which_ICD_Version_To_Load IN ('ALL', '09', '9')
@@ -219,15 +227,17 @@ BEGIN
 			,CMS_Fiscal_Year
 			,Effective_Date
 			,End_Date
-			,POA_File_Name
+			,CMS_File_Name
 		)
 		VALUES
-			 ('9', '2011', '2010-10-01', '2011-09-30', 'POA_Exempt_Per_CMS_Transmittal_R756OTN_Oct12010_FY2011.txt')
-			,('9', '2012', '2011-10-01', '2012-09-30', 'POA_Exempt_Diagnosis_Codes_Oct12011_FY2012.txt')
-			,('9', '2013', '2012-10-01', '2013-09-30', 'POA_Exempt_Diagnosis_Codes_Oct12011_FY2012.txt')
-			,('9', '2014', '2013-10-01', '2014-09-30', 'POA_Exempt_Diagnosis_Codes_Oct12013_FY2014.txt')
-			,('9', '2015', '2014-10-01', '2015-09-30', 'ICD-9_POA_Exempt_Diagnosis_Codes_Oct12014_FY2015.txt')
+			 (9, 2011, '2010-10-01', '2011-09-30', 'POA_Exempt_Per_CMS_Transmittal_R756OTN_Oct12010_FY2011.txt')
+			,(9, 2012, '2011-10-01', '2012-09-30', 'POA_Exempt_Diagnosis_Codes_Oct12011_FY2012.txt')
+			,(9, 2013, '2012-10-01', '2013-09-30', 'POA_Exempt_Diagnosis_Codes_Oct12011_FY2012.txt')
+			,(9, 2014, '2013-10-01', '2014-09-30', 'POA_Exempt_Diagnosis_Codes_Oct12013_FY2014.txt')
+			,(9, 2015, '2014-10-01', '2015-09-30', 'ICD-9_POA_Exempt_Diagnosis_Codes_Oct12014_FY2015.txt')
 	END
+
+
 
 	/**
 	 *  Loop through all ICD CMS FYs with a cursor, loading the permanent output 
@@ -238,36 +248,36 @@ BEGIN
 		@This_CMS_FY           VARCHAR(4),
 		@This_Effective_Date   VARCHAR(10),
 		@This_End_Date         VARCHAR(10),
-		@This_POA_File_Name	  VARCHAR(200);
+		@This_CMS_File_Name	  VARCHAR(200);
 	;
 
-	DECLARE Cursor_CMS_FY CURSOR
+	DECLARE Cursor_CMS_Release CURSOR
 	LOCAL READ_ONLY FORWARD_ONLY
 	FOR
 	SELECT 
-		ICD_Version,
-		CMS_Fiscal_Year,
+		CAST(ICD_Version AS VARCHAR(2)) AS ICD_Version,
+		CAST(CMS_Fiscal_Year AS VARCHAR(4)) AS CMS_Fiscal_Year,
 		CAST(Effective_Date AS VARCHAR(10)) AS Effective_Date,
 		CAST(End_Date AS VARCHAR(10)) AS End_Date,
-		POA_File_Name
+		CMS_File_Name
 	FROM #CMS_FY_Release_Map
 	ORDER BY 
 		CMS_Fiscal_Year
 	 
-	OPEN Cursor_CMS_FY 
+	OPEN Cursor_CMS_Release 
 	FETCH NEXT 
-	FROM Cursor_CMS_FY 
+	FROM Cursor_CMS_Release 
 	INTO 
 		@This_ICD_Version,
 		@This_CMS_FY,
 		@This_Effective_Date,
 		@This_End_Date,
-		@This_POA_File_Name
+		@This_CMS_File_Name
 
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 
-		RAISERROR ('%s--- Loading POA-exempt ICD-%s-CM codes for CMS FY %s from file %s ---', 0, 1, @NewLine, @This_ICD_Version, @This_CMS_FY , @This_POA_File_Name) 
+		RAISERROR ('%s--- Loading POA-exempt ICD-%s-CM codes for CMS FY %s from file %s ---', 0, 1, @NewLine, @This_ICD_Version, @This_CMS_FY , @This_CMS_File_Name) 
 
 		IF @This_ICD_Version = 9
 		BEGIN
@@ -287,10 +297,10 @@ BEGIN
 				 ,' + @This_CMS_FY + ' AS CMS_Fiscal_Year
 				,''' + @This_Effective_Date + ''' AS Effective_Date
 				,''' + @This_End_Date + ''' AS End_Date
-				,SUBSTRING(LTRIM(RTRIM(src.Diagnosis_Code)), 1, 5) AS Diagnosis_Code
+				,SUBSTRING(LTRIM(RTRIM(UPPER(src.Diagnosis_Code))), 1, 5) AS Diagnosis_Code
 				,LTRIM(RTRIM(src.Code_Desc_Long)) AS Code_Desc_Long
 			FROM OPENROWSET(
-				BULK ''' + @Source_File_Dir + '\' + @This_POA_File_Name
+				BULK ''' + @Source_File_Dir + '\' + @This_CMS_File_Name
 				+ '''
 				,FORMATFILE = ''' + @Source_File_Dir + '\ICD9_POAexemptcodes_format.fmt'
 				+ '''
@@ -299,6 +309,7 @@ BEGIN
 				,FIRSTROW = 2
 			) AS src
 			;'
+
 		END
 
 		ELSE IF @This_ICD_Version = 10
@@ -319,11 +330,11 @@ BEGIN
 				 ,' + @This_CMS_FY + ' AS CMS_Fiscal_Year
 				,''' + @This_Effective_Date + ''' AS Effective_Date
 				,''' + @This_End_Date + ''' AS End_Date
-				,SUBSTRING(REPLACE(LTRIM(RTRIM(src.Diagnosis_Code_With_Period)), ''.'', ''''), 1, 7) AS Diagnosis_Code
-				,SUBSTRING(LTRIM(RTRIM(src.Diagnosis_Code_With_Period)), 1, 8) AS Diagnosis_Code_With_Period
+				,SUBSTRING(REPLACE(LTRIM(RTRIM(UPPER(src.Diagnosis_Code_With_Period))), ''.'', ''''), 1, 7) AS Diagnosis_Code
+				,SUBSTRING(LTRIM(RTRIM(UPPER(src.Diagnosis_Code_With_Period))), 1, 8) AS Diagnosis_Code_With_Period
 				,SUBSTRING(LTRIM(RTRIM(REPLACE(src.Code_Desc_Long, ''"'', ''''))), 1, 323) AS Code_Desc_Long
 			FROM OPENROWSET(
-				BULK ''' + @Source_File_Dir + '\' + @This_POA_File_Name
+				BULK ''' + @Source_File_Dir + '\' + @This_CMS_File_Name
 				+ '''
 				,FORMATFILE = ''' + @Source_File_Dir + '\POAexemptcodes_format.fmt'
 				+ '''
@@ -332,22 +343,23 @@ BEGIN
 				,FIRSTROW = 2
 			) AS src
 			;'
+			
 		END
 
 		EXEC (@SQL)
 
 		FETCH NEXT 
-		FROM Cursor_CMS_FY 
+		FROM Cursor_CMS_Release 
 		INTO 
 			@This_ICD_Version,
 			@This_CMS_FY,
 			@This_Effective_Date,
 			@This_End_Date,
-			@This_POA_File_Name
+			@This_CMS_File_Name
 
 	END
-	CLOSE Cursor_CMS_FY 
-	DEALLOCATE Cursor_CMS_FY 
+	CLOSE Cursor_CMS_Release 
+	DEALLOCATE Cursor_CMS_Release 
 
 	/**
 	 *  Standardize what is available in the output table because of differences
@@ -356,6 +368,8 @@ BEGIN
 	 */
 	IF @Which_ICD_Version_To_Load IN ('ALL', '09', '9')
 	BEGIN
+
+		RAISERROR ('%s--- Populating Diagnosis_Code_With_Period for ICD-9 files ---', 0, 1, @NewLine) 
 
 		SET @SQL = '
 			UPDATE ' + @Schema_Name + '.' + @Table_Name + '
@@ -378,8 +392,16 @@ BEGIN
 				ICD_Version = 9
 				AND Diagnosis_Code LIKE ''[V0-9]%''
 		;'
+
 		EXEC (@SQL)
+
 	END
+
+	SET @SQL = '
+		ALTER TABLE ' + @Schema_Name + '.' + @Table_Name + '
+		ALTER COLUMN Diagnosis_Code_With_Period VARCHAR(8) NOT NULL;
+	;'
+	RAISERROR ('%s--- Changing Diagnosis_Code_With_Period to NOT NULL ---', 0, 1, @NewLine) 
 
 END
 

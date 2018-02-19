@@ -13,7 +13,7 @@ ALTER PROCEDURE dbo.ICD_Diag_001_Import_Descriptions_OPENROWSET (
 	 @Schema_Name VARCHAR(32) = 'dbo'
 	,@Table_Name VARCHAR(100) = 'DIM_ICD_Diagnosis'
 	,@Table_Action VARCHAR(16) = 'DROP_CREATE'
-	,@Which_ICD_Version_To_Load VARCHAR(4) = 'ALL'
+	,@Which_ICD_Version_To_Load VARCHAR(3) = 'ALL'
 	,@Source_File_Dir VARCHAR(1000) = NULL
 ) AS
 BEGIN
@@ -25,30 +25,30 @@ BEGIN
 		ICD_Diag_001_Import_Descriptions_OPENROWSET
 
 	DESCRIPTION
-		*	Includes ICD-9 and ICD-10 diagnosis code descriptions from CMS releases FY 2010-2018
+		*	See repo LICENSE and see repo README for details and sources for data loaded here
+		*	Loads table with ICD-9 and ICD-10 diagnosis code descriptions from CMS 
+			releases for Fiscal Years (FY) 2010-2018, available for download from cms.gov,
+			to serve as a simple lookup/reference/dimension table. 
 		*	This is the simple (OPENROWSET) method to import this info.
 			dbo.ICD_Diag_001_Import_Descriptions_AsValues does exactly the same thing,
 			but does not require OPENROWSET permissions (i.e., ADMINISTER BULK OPERATIONS)
-		*	This imports flat files with ICD-9 and ICD-10 diagnosis code descriptions, 
-			available for download from cms.gov, into a SQL Server table, to serve as a 
-			simple lookup/reference/dimension table. 
-			*	ICD-9: See repo readme for details on what cleaning was applied to generate
-				the flat files with ICD-9 code descriptions (that is, save-as of Excel files)
-				I did not attempt to replicate the file layout of the ICD-10 files
-		*	File format/layout available here:
-			*	ICD9_CM: one file, bar-delimited format, with both short and long descriptions,
-				with double-quotes surrounding every field. Note that this file specification
-				escapes any double-quotes within the descriptions with (e.g., "" if the code
-				description includes a "), so the insert statement cleans those out again.
-			*	ICD10_CM: one file, fixed-width format, with both short and long descriptions
-			*	The fixed-width format means that no delimiters exist. To account for that,
-				the .fmt file has placeholders (Filler_##) for them, but does not load 
-				them to the permanent output table
-		*	Note that the file specification for the ICD-10 order files allows
-			the ICD_Desc_Long field to be up to length = 323 (400 - 77), but the
-			observed length for ICD-10 files is never longer than 256. You could 
-			reasonably decide to set that field length to 256 instead of 323.
-		*	See repo LICENSE and see README for details and sources for files loaded here
+		*	File format/layout that is loaded here:
+			*	ICD_9: one file, bar-delimited format, with both short and long descriptions,
+				with double-quotes surrounding every field. 
+				*	See repo readme for details on what cleaning was applied to generate
+					the flat files with ICD-9 code descriptions (that is, save-as of Excel files)
+					I did not attempt to replicate the file layout of the ICD-10 files
+				*	Note that this file specification escapes any double-quotes within the 
+					descriptions with (e.g., "" if the code description includes a "), so 
+					the insert statement cleans those out again with a REPLACE() function
+			*	ICD_10: one file, fixed-width format, with both short and long descriptions
+				*	The fixed-width format means that no delimiters exist. To account for that,
+					the .fmt file has placeholders (Filler_##) for them, but does not load 
+					them to the permanent output table
+		*	NOTE: The file specification for the ICD-10 order files allows
+			the Code_Desc_Long field to be up to length = 323 (400 - 77), but the
+			observed length in ICD-10 diagnosis files is never longer than 228. You could 
+			reasonably decide to set that field length to something shorter than 323.
 
 	PARAMETERS
 		@Schema_Name (Required, if other than default of 'dbo')
@@ -70,14 +70,11 @@ BEGIN
 			subdirectory
 
 	WHAT THIS PROCEDURE DOES
-		*	Dependent on which @Table_Action is invoked, this will either
-			'DROP_CREATE': Create permanent output table for ICD diagnosis codes,
-			dropping the table if it already exists
-			'TRUNCATE': TRUNCATE the existing output table
-			'DELETE_ICD9': Delete any ICD-9 codes from the existing output table
-			'DELETE_ICD10': Delete any ICD-10 codes from the existing output table
+		*	Dependent on which @Table_Action is invoked, prepare the permanent output 
+			table (@Schema_Name.@Table_Name), via either DROP_CREATE, TRUNCATE, 
+			DELETE_ICD9, or DELETE_ICD10
 		*	Load all ICD diagnosis codes and their descriptions:
-			*	Create temporary table #CMS_ICD_Diag_Release_Map and populate it, conditional on 
+			*	Create temporary table #CMS_FY_Release_Map and populate it, conditional on 
 				@Which_ICD_Version_To_Load, with the files that will be loaded here, and 
 				the CMS release info (ICD version, CMS FY, and effective/end dates) for each file
 			*	Loop through all ICD CMS FYs with a cursor, loading the permanent output 
@@ -85,13 +82,21 @@ BEGIN
 
 	EXAMPLE CALL
 	exec dbo.ICD_Diag_001_Import_Descriptions_OPENROWSET 
-		@Table_Name = 'DIM_ICD_Diagnosis_Test'
+		@Table_Name = 'DIM_ICD_Diagnosis_All'
 		,@Table_Action = 'DROP_CREATE'
 		,@Which_ICD_Version_To_Load = 'ALL'
 		,@Source_File_Dir = 
 			'C:\Users\Nicole\Documents\GitHub\CMS_MS_DRG_Grouper_Help\CMS_ICD_Code_Descriptions'
 
 	CHANGE LOG
+		2018.02.18 NLM
+			*	Minor changes related to adding parallel SPs to import ICD procedure codes
+				*	Reworded some comments/documentation within this code 
+				*	Renamed flat-file subdirectories to ICD_9 and ICD_10, updated references
+					to them. 
+				*	Changes to accommodate .fmt file changes -- made field names generic
+					(mainly ICD_Code instead of Diagnosis_Code) so that the same .fmt files
+					can be used to import both diagnosis and procedure codes
 		2018.02.11 NLM
 			*	Added FY 2010 ICD codes
 			*	Refactored the import procedure for ICD-9, simplifying this SP, because the 
@@ -121,15 +126,15 @@ BEGIN
 	DECLARE @NewLine CHAR(2) = CHAR(10) + CHAR(10);
 	DECLARE @SQL VARCHAR(MAX);
 
+
+
 	/**
-	 *  Dependent on which @Table_Action is invoked, this will either
-	 *  'DROP_CREATE': Create permanent output table for ICD diagnosis codes,
-	 *  dropping the table if it already exists
-	 *  'TRUNCATE': TRUNCATE the existing output table
-	 *  'DELETE_ICD9': Delete any ICD-9 codes from the existing output table
-	 *  'DELETE_ICD10': Delete any ICD-10 codes from the existing output table
+	 *  Dependent on which @Table_Action is invoked, prepare the permanent output 
+	 *  table (@Schema_Name.@Table_Name), via either DROP_CREATE, TRUNCATE, 
+	 *  DELETE_ICD9, or DELETE_ICD10
 	 */
 	RAISERROR ('%s--- Prep final output table %s.%s via %s ---', 0, 1, @NewLine, @Schema_Name, @Table_Name, @Table_Action) 
+	
 	IF @Table_Action = 'DROP_CREATE'
 	BEGIN
 		RAISERROR ('--- Drop (if it already exists) and recreate ---', 0, 1) 
@@ -153,6 +158,7 @@ BEGIN
 				,Diagnosis_Code
 			)
 		);'
+
 		EXEC(@SQL)
 	END
 
@@ -189,61 +195,62 @@ BEGIN
 	END
 	
 
+
 	/* Load all ICD diagnosis codes and their descriptions
 	=================================================================================== */
 	RAISERROR ('%s%s--- --- LOAD ICD DIAGNOSIS CODES --- ---', 0, 1, @NewLine, @NewLine) 
 
 	/**
-	 *  Create temporary table #CMS_ICD_Diag_Release_Map and populate it, conditional on 
-	 *  @Which_ICD_Version_To_Load, with the files that will be loaded here, and 
-	 *  the CMS release info (ICD version, CMS FY, and effective/end dates) for each file
+	 *  Create temporary table #CMS_FY_Release_Map and populate it with all CMS FYs
+	 *  and effective/end dates to be loaded, per @Which_ICD_Version_To_Load
 	 */
-	RAISERROR ('%s--- Create lookup table (to use in loop) with CMS fiscal years and the available source files with ICD diagnosis codes ---', 0, 1, @NewLine) 
+	RAISERROR ('%s--- Create temp table with CMS FYs that will be loaded here ---', 0, 1, @NewLine) 
 	
-	IF OBJECT_ID('tempdb..#CMS_ICD_Diag_Release_Map') IS NOT NULL
+	IF OBJECT_ID('tempdb..#CMS_FY_Release_Map') IS NOT NULL
 	BEGIN
-		DROP TABLE #CMS_ICD_Diag_Release_Map
+		DROP TABLE #CMS_FY_Release_Map
 	END
-	CREATE TABLE #CMS_ICD_Diag_Release_Map (
-		 ICD_Version		VARCHAR(2)		NOT NULL
-		,CMS_Fiscal_Year  VARCHAR(4) 		NOT NULL
-		,Effective_Date   DATE       		NOT NULL
-		,End_Date         DATE       		NOT NULL
-		,ICD_File_Name		VARCHAR(200)	NULL
+	CREATE TABLE #CMS_FY_Release_Map (
+		 ICD_Version		INT       	   NOT NULL
+		,CMS_Fiscal_Year  INT      	   NOT NULL
+		,Effective_Date   DATE       	   NOT NULL
+		,End_Date         DATE       	   NOT NULL
+		,CMS_File_Name		VARCHAR(200)   NOT NULL
 	);
 
 	IF @Which_ICD_Version_To_Load IN ('ALL', '10')
 	BEGIN
-		INSERT INTO #CMS_ICD_Diag_Release_Map (
+		INSERT INTO #CMS_FY_Release_Map (
 			 ICD_Version
 			,CMS_Fiscal_Year
 			,Effective_Date
 			,End_Date
-			--,ICD_File_Name Not required for ICD-10. Has a standard naming convention
+			,CMS_File_Name
 		)
 		VALUES
-			 ('10', '2016', '2015-10-01', '2016-09-30', 'icd10cm_order_2016.txt')
-			,('10', '2017', '2016-10-01', '2017-09-30', 'icd10cm_order_2017.txt')
-			,('10', '2018', '2017-10-01', '2018-09-30', 'icd10cm_order_2018.txt')
+			 (10, 2016, '2015-10-01', '2016-09-30', 'icd10cm_order_2016.txt')
+			,(10, 2017, '2016-10-01', '2017-09-30', 'icd10cm_order_2017.txt')
+			,(10, 2018, '2017-10-01', '2018-09-30', 'icd10cm_order_2018.txt')
 	END
 
 	IF @Which_ICD_Version_To_Load IN ('ALL', '09', '9')
 	BEGIN
-		INSERT INTO #CMS_ICD_Diag_Release_Map (
+		INSERT INTO #CMS_FY_Release_Map (
 			 ICD_Version
 			,CMS_Fiscal_Year
 			,Effective_Date
 			,End_Date
-			,ICD_File_Name
+			,CMS_File_Name
 		)
 		VALUES
-			 ('9', '2010', '2009-10-01', '2010-09-30', 'V27LONG_SHORT_DX_110909u021012 Sheet1.txt')
-			,('9', '2011', '2010-10-01', '2011-09-30', 'CMS28_DESC_LONG_SHORT_DX Sheet1.txt')
-			,('9', '2012', '2011-10-01', '2012-09-30', 'CMS29_DESC_LONG_SHORT_DX 101111u021012 Sheet1.txt')
-			,('9', '2013', '2012-10-01', '2013-09-30', 'CMS30_DESC_LONG_SHORT_DX 080612 Sheet1.txt')
-			,('9', '2014', '2013-10-01', '2014-09-30', 'CMS31_DESC_LONG_SHORT_DX Sheet1.txt')
-			,('9', '2015', '2014-10-01', '2015-09-30', 'CMS32_DESC_LONG_SHORT_DX Sheet1.txt')
+			 (9, 2010, '2009-10-01', '2010-09-30', 'V27LONG_SHORT_DX_110909u021012 Sheet1.txt')
+			,(9, 2011, '2010-10-01', '2011-09-30', 'CMS28_DESC_LONG_SHORT_DX Sheet1.txt')
+			,(9, 2012, '2011-10-01', '2012-09-30', 'CMS29_DESC_LONG_SHORT_DX 101111u021012 Sheet1.txt')
+			,(9, 2013, '2012-10-01', '2013-09-30', 'CMS30_DESC_LONG_SHORT_DX 080612 Sheet1.txt')
+			,(9, 2014, '2013-10-01', '2014-09-30', 'CMS31_DESC_LONG_SHORT_DX Sheet1.txt')
+			,(9, 2015, '2014-10-01', '2015-09-30', 'CMS32_DESC_LONG_SHORT_DX Sheet1.txt')
 	END
+
 
 
 	/**
@@ -255,18 +262,18 @@ BEGIN
 		@This_CMS_FY           VARCHAR(4),
 		@This_Effective_Date   VARCHAR(10),
 		@This_End_Date         VARCHAR(10),
-		@This_ICD_File_Name	  VARCHAR(200)
+		@This_CMS_File_Name	  VARCHAR(200)
 	;
 	DECLARE Cursor_CMS_Release CURSOR
 	LOCAL READ_ONLY FORWARD_ONLY
 	FOR
 	SELECT 
-		ICD_Version,
-		CMS_Fiscal_Year,
+		CAST(ICD_Version AS VARCHAR(2)) AS ICD_Version,
+		CAST(CMS_Fiscal_Year AS VARCHAR(4)) AS CMS_Fiscal_Year,
 		CAST(Effective_Date AS VARCHAR(10)) AS Effective_Date,
 		CAST(End_Date AS VARCHAR(10)) AS End_Date,
-		ICD_File_Name
-	FROM #CMS_ICD_Diag_Release_Map
+		CMS_File_Name
+	FROM #CMS_FY_Release_Map
 	ORDER BY 
 		CMS_Fiscal_Year
 	 
@@ -278,12 +285,12 @@ BEGIN
 		@This_CMS_FY,
 		@This_Effective_Date,
 		@This_End_Date,
-		@This_ICD_File_Name
+		@This_CMS_File_Name
 
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 
-		RAISERROR ('%s--- Inserting ICD-%s diagnosis codes for CMS FY %s ---', 0, 1, @NewLine, @This_ICD_Version, @This_CMS_FY) 
+		RAISERROR ('%s--- Inserting ICD-%s diagnosis codes for CMS FY %s from file %s ---', 0, 1, @NewLine, @This_ICD_Version, @This_CMS_FY, @This_CMS_File_Name) 
 
 		IF @This_ICD_Version = 9
 		BEGIN
@@ -303,23 +310,21 @@ BEGIN
 				,' + @This_CMS_FY + ' AS CMS_Fiscal_Year
 				,''' + @This_Effective_Date + ''' AS Effective_Date
 				,''' + @This_End_Date + ''' AS End_Date
-				,SUBSTRING(LTRIM(RTRIM(src.Diagnosis_Code)), 1, 5) AS Diagnosis_Code
+				,SUBSTRING(LTRIM(RTRIM(src.ICD_Code)), 1, 5) AS Diagnosis_Code
 				,SUBSTRING(LTRIM(RTRIM(REPLACE(src.Code_Desc_Short, ''""'', ''"''))), 1, 60) AS Code_Desc_Short
 				,SUBSTRING(LTRIM(RTRIM(REPLACE(src.Code_Desc_Long, ''""'', ''"''))), 1, 323) AS Code_Desc_Long
 			FROM OPENROWSET(
-				BULK ''' + @Source_File_Dir + '\ICD9_CM\' + @This_ICD_File_Name
+				BULK ''' + @Source_File_Dir + '\ICD_9\' + @This_CMS_File_Name
 				+ '''
-				,FORMATFILE = ''' + @Source_File_Dir + '\ICD9_CM\icd9cm_format.fmt'
+				,FORMATFILE = ''' + @Source_File_Dir + '\ICD_9\icd9_desc_long_short_format.fmt'
 				+ '''
-				,ERRORFILE = ''' + @Source_File_Dir + '\ICD9_CM\Errorfile_Diag_FY' + @This_CMS_FY + '.err'''
+				,ERRORFILE = ''' + @Source_File_Dir + '\ICD_9\Errorfile_Diag_FY' + @This_CMS_FY + '.err'''
 				+ '
 				,FIRSTROW = 2
 				,CODEPAGE = 65001
 			) AS src 
-			
 			;'
 
-			EXEC (@SQL)
 		END
 
 		ELSE IF @This_ICD_Version = 10
@@ -340,25 +345,26 @@ BEGIN
 				,' + @This_CMS_FY + ' AS CMS_Fiscal_Year
 				,''' + @This_Effective_Date + ''' AS Effective_Date
 				,''' + @This_End_Date + ''' AS End_Date
-				,SUBSTRING(LTRIM(RTRIM(src.Diagnosis_Code)), 1, 7) AS Diagnosis_Code
+				,SUBSTRING(LTRIM(RTRIM(src.ICD_Code)), 1, 7) AS Diagnosis_Code
 				,SUBSTRING(LTRIM(RTRIM(src.Code_Desc_Short)), 1, 60) AS Code_Desc_Short
 				,SUBSTRING(LTRIM(RTRIM(src.Code_Desc_Long)), 1, 323) AS Code_Desc_Long
 			FROM OPENROWSET(
-				BULK ''' + @Source_File_Dir + '\ICD10_CM\' + @This_ICD_File_Name
+				BULK ''' + @Source_File_Dir + '\ICD_10\' + @This_CMS_File_Name
 				+ '''
-				,FORMATFILE = ''' + @Source_File_Dir + '\ICD10_CM\icd10cm_order_format.fmt'
+				,FORMATFILE = ''' + @Source_File_Dir + '\ICD_10\icd10_order_format.fmt'
 				+ '''
-				,ERRORFILE = ''' + @Source_File_Dir + '\ICD10_CM\Errorfile_Diag_FY' + @This_CMS_FY + '.err'''
+				,ERRORFILE = ''' + @Source_File_Dir + '\ICD_10\Errorfile_Diag_FY' + @This_CMS_FY + '.err'''
 				+ '
 				,FIRSTROW = 1
+				,CODEPAGE = 65001
 			) AS src 
 			WHERE 
 				Code_Is_HIPAA_Valid = ''1''
 			;'
 
-			EXEC (@SQL)
-
 		END
+
+		EXEC (@SQL)
 
 		FETCH NEXT 
 		FROM Cursor_CMS_Release 
@@ -367,7 +373,7 @@ BEGIN
 			@This_CMS_FY,
 			@This_Effective_Date,
 			@This_End_Date,
-			@This_ICD_File_Name
+			@This_CMS_File_Name
 	END
 	CLOSE Cursor_CMS_Release 
 	DEALLOCATE Cursor_CMS_Release 
