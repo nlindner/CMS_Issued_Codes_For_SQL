@@ -74,9 +74,8 @@ BEGIN
 			table (@Schema_Name.@Table_Name), via either DROP_CREATE, TRUNCATE, 
 			DELETE_ICD9, or DELETE_ICD10
 		*	Load all ICD diagnosis codes and their descriptions:
-			*	Create temporary table #CMS_FY_Release_Map and populate it, conditional on 
-				@Which_ICD_Version_To_Load, with the files that will be loaded here, and 
-				the CMS release info (ICD version, CMS FY, and effective/end dates) for each file
+			*	Create temporary table #CMS_FY_Release_Map and populate it with all CMS FYs
+				and effective/end dates to be loaded, per @Which_ICD_Version_To_Load
 			*	Loop through all ICD CMS FYs with a cursor, loading the permanent output 
 				table with all available description files via OPENROWSET.
 
@@ -89,6 +88,8 @@ BEGIN
 			'C:\Users\Nicole\Documents\GitHub\CMS_MS_DRG_Grouper_Help\CMS_ICD_Code_Descriptions'
 
 	CHANGE LOG
+		2018.02.25 NLM
+			*	Minor fixes to documentation in change log vs. code body. *sigh*
 		2018.02.18 NLM
 			*	Minor changes related to adding parallel SPs to import ICD procedure codes
 				*	Reworded some comments/documentation within this code 
