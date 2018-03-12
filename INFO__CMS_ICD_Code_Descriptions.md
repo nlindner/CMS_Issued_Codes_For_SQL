@@ -1,0 +1,37 @@
+# CMS_ICD_Code_Descriptions
+
+### Overview
+  * Contains CMS releases for ICD-9 and ICD-10 diagnosis and procedure codes, for CMS fiscal years (FYs) 2010-2018
+  * The flat files within the ICD_9 and ICD_10 subdirectories are read in via the ICD_Diag_001_Import_Descriptions... or ICD_Proc_001_Import_Descriptions... stored procedures.
+
+### Files Available Here
+  * Note: The file specification for the ICD-10 order files allows the Code_Desc_Long field to be up to length = 323 (400 - 77), but the max observed length in ICD-9 and ICD-10 files is never longer than 228 (for diagnoses) or 168 (for procedures). You could reasonably decide to set that field length to something shorter than 323.
+  * The ICD subdirectories contain flat files that are imported by the stored procedures. The file layouts are as follows:
+	  - [ICD_9](../CMS_ICD_Code_Descriptions/ICD_9): One file for each FY and code type, bar-delimited format, containing ICD codes and short and long descriptions, with double-quotes surrounding every field. This file specification escapes any double-quotes within the descriptions with (e.g., "" if the code description includes a "), so in the OPENROWSET SPs, the INSERT statement cleans those out again with a REPLACE() function
+	  - [ICD_10](../CMS_ICD_Code_Descriptions/ICD_10): One file for each FY and code type, fixed-width format, containing ICD codes and short and long descriptions. These were downloaded directly from cms.gov. The fixed-width format means that no delimiters exist. To account for that, the .fmt file has placeholders (Filler_##) for them, but does not load them to the permanent output table.
+  * The flat files with the ICD-9 code descriptions available here are reformatted versions of the files I downloaded directly from CMS. I created them by saving the .xls or .xlsx file within the FY release as bar-delimited flat file, with double-quote text qualifiers around all fields in all rows. I used the Excel files because of the variations in what was available in the ICD-9 releases as the flat (non-Excel) files. For example, the flat files:
+      - Did not have a single, common file structure: FY 2010 contained one flat file with both long and short descriptions; all others contained a separate short-description file and long-description file.
+      - FY 2010 was also the only release where the flat file was not space-delimited. Instead it was .csv/comma-delimited AND used double-quotes as text-qualifiers, but only around descriptions that contained commas (and other special characters?). Naturally, SQL Server does not recognize the unofficial/de facto standard for .csv files (e.g., RFC 4180).
+      - The flat files for the release did not always contain any post-release corrections to the long descriptions (e.g., diagnosis code 86415 for CMS FY 2010 and 2012; diagnosis code 55011 for CMS FY 2013). Moreover, the FY 2010 release contained a flat file with the corrections, but the ICD diagnosis codes in it lacked any leading zeros (e.g., the first two diagnosis codes are "10" and "11" instead of "0010" and "0011", which would require rather tricky special handling to import and map back to what the values should be).
+
+---
+### File Sources: ICD-10
+| CMS FY | ICD Code Type | Source File for CMS ICD-10 Code Descriptions Is |
+| ------ | ----------- | ------------   |
+| 2018   | Diagnoses   | [2018 ICD-10 CM and GEMs](https://www.cms.gov/Medicare/Coding/ICD10/2018-ICD-10-CM-and-GEMs.html) <br/> --> [2018 Code Descriptions in Tabular Order](https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2018-ICD-10-Code-Descriptions.zip) <br/> --> icd10cm_order_2018.txt  |
+| 2018   | Procedures  | [2018 ICD-10 PCS and GEMs](https://www.cms.gov/Medicare/Coding/ICD10/2018-ICD-10-PCS-and-GEMs.html) <br/>--> [2018 ICD-10-PCS Order File (Long and Abbreviated Titles)](https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2018-ICD-10-PCS-Order-File.zip) <br/> --> icd10pcs_order_2018.txt |
+| 2017 | Diagnoses     | [2017 ICD-10 CM and GEMs](https://www.cms.gov/Medicare/Coding/ICD10/2017-ICD-10-CM-and-GEMs.html) <br/> --> [2017 Code Descriptions in Tabular Order](https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2017-ICD10-Code-Descriptions.zip) <br/> --> icd10cm_order_2017.txt
+| 2017   | Procedures  | [2017 ICD-10 PCS and GEMs](https://www.cms.gov/Medicare/Coding/ICD10/2017-ICD-10-PCS-and-GEMs.html) <br/> --> [2017 ICD-10-PCS Order File (Long and Abbreviated Titles)](https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2017-PCS-Long-Abbrev-Titles.zip) <br/> --> icd10pcs_order_2017.txt |
+| 2016   | Diagnoses   | [2016 ICD-10 CM and GEMs](https://www.cms.gov/Medicare/Coding/ICD10/2016-ICD-10-CM-and-GEMs.html) <br/> --> [2016 Code Descriptions in Tabular Order](https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2016-Code-Descriptions-in-Tabular-Order.zip) <br/> --> icd10cm_order_2016.txt |
+| 2016   | Procedures  | [2016 ICD-10 PCS and GEMs](https://www.cms.gov/Medicare/Coding/ICD10/2016-ICD-10-PCS-and-GEMs.html) <br/> --> [2016 PCS Long and Abbreviated Titles](https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2016-PCS-Long-Abbrev-Titles.zip) <br/> --> icd10pcs_order_2016.txt |
+
+---
+### File Sources: ICD-9
+| CMS FY | Source File at [ICD-9-CM Diagnosis and Procedure Codes: Abbreviated and Full Code Titles](https://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/codes.html) | CMS ICD-9 Description Files for Diagnoses (DX) and Procedures (SG) |
+| ------ | ----------- | ------------     |
+| 2015   | [Version 32 Full and Abbreviated Code Titles <br/> – Effective October 1, 2014](https://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/Downloads/ICD-9-CM-v32-master-descriptions.zip) | CMS32_DESC_LONG_SHORT_DX.xlsx <br/>CMS32_DESC_LONG_SHORT_SG.xlsx |
+| 2014 | [Version 31 Full and Abbreviated Code Titles <br/> – Effective October 1, 2013](https://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/Downloads/cmsv31-master-descriptions.zip) | CMS31_DESC_LONG_SHORT_DX.xlsx <br/>  CMS31_DESC_LONG_SHORT_SG.xlsx |
+| 2013 | [Version 30 Full and Abbreviated Code Titles <br/> – Effective October 1, 2012 <br/> (05/12/2012: Corrections have been made to the full code descriptions for diagnosis codes 59800, 59801, 65261, and 65263](https://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/Downloads/cmsv30_master_descriptions.zip) | CMS30_DESC_LONG_SHORT_DX 080612.xlsx <br/> CMS30_DESC_LONG_SHORT_SG 051812.xlsx |
+| 2012 | [Version 29 Full and Abbreviated Code Titles <br/> – Effective October 1, 2011](https://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/Downloads/cmsv29_master_descriptions.zip) | CMS29_DESC_LONG_SHORT_DX 101111u021012.xls <br/> CMS29_DESC_LONG_SHORT_SG.xls |
+| 2011 | [Version 28 Full and Abbreviated Code Titles <br/> – Effective October 1, 2010](https://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/Downloads/cmsv28_master_descriptions.zip) | CMS28_DESC_LONG_SHORT_DX.xls<br/> CMS28_DESC_LONG_SHORT_SG.xls |
+| 2010 | [Version 27 Full and Abbreviated Code Titles <br/> – Effective October 1, 2009](https://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/Downloads/FY2010Diagnosis-ProcedureCodesFullTitles.zip) | V27LONG_SHORT_DX_110909u021012.xls<br/> CMS27_DESC_LONG_SHORT_SG_092709.xls |

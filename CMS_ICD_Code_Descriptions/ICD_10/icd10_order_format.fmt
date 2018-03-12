@@ -8,4 +8,4 @@
 6 SQLCHAR 0   1 ""       0 Filler_03             Latin1_General_CI_AS
 7 SQLCHAR 0   60 ""      4 Code_Desc_Short       Latin1_General_CI_AS
 8 SQLCHAR 0   1 ""       0 Filler_04             Latin1_General_CI_AS
-9 SQLCHAR 0   323 "\r\n" 5 Code_Desc_Long        Latin1_General_CI_AS
+9 SQLCHAR 0   323 "\n"   5 Code_Desc_Long        Latin1_General_CI_AS

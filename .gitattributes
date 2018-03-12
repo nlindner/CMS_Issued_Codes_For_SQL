@@ -16,3 +16,12 @@
 *.PDF	 diff=astextplain
 *.rtf	 diff=astextplain
 *.RTF	 diff=astextplain
+
+# Custom for SQL Server .fmt files *sigh*
+*.fmt  text eol=crlf
+
+# Custom so the ICD code descriptions with accented characters will be imported correctly and line endings are consistent
+*.txt encoding=UTF-8 eol=lf
+*.sql encoding=UTF-8 eol=lf
+*.md eol=lf
+*.MD eol=lf

@@ -10,11 +10,19 @@ END TRY BEGIN CATCH END CATCH
 GO
 
 ALTER PROCEDURE dbo.ICD_Diag_001_Import_Descriptions_OPENROWSET (
-	 @Schema_Name VARCHAR(32) = 'dbo'
-	,@Table_Name VARCHAR(100) = 'DIM_ICD_Diagnosis'
-	,@Table_Action VARCHAR(16) = 'DROP_CREATE'
-	,@Which_ICD_Version_To_Load VARCHAR(3) = 'ALL'
-	,@Source_File_Dir VARCHAR(1000) = NULL
+	 @Schema_Name                   VARCHAR(32)    = 'dbo'
+	,@Table_Name                    VARCHAR(100)   = 'DIM_ICD_Diagnosis'
+	,@Table_Action                  VARCHAR(16)    = 'DROP_CREATE'
+	,@Which_ICD_Version_To_Load     VARCHAR(3)     = 'ALL'
+	,@Source_File_Dir               VARCHAR(1000)  = NULL
+	,@Which_CodePage                VARCHAR(10)    = NULL
+	,@FieldNm_CMS_Fiscal_Year       VARCHAR(100)   = 'CMS_Fiscal_Year'
+	,@FieldNm_Effective_Date        VARCHAR(100)   = 'Effective_Date'
+	,@FieldNm_End_Date              VARCHAR(100)   = 'End_Date'
+	,@FieldNm_ICD_Version           VARCHAR(100)   = 'ICD_Version'
+	,@FieldNm_ICD_Code              VARCHAR(100)   = 'Diagnosis_Code'
+	,@FieldNm_Code_Desc_Short       VARCHAR(100)   = 'Code_Desc_Short'
+	,@FieldNm_Code_Desc_Long        VARCHAR(100)   = 'Code_Desc_Long'
 ) AS
 BEGIN
 /* ======================================================================================
@@ -25,30 +33,29 @@ BEGIN
 		ICD_Diag_001_Import_Descriptions_OPENROWSET
 
 	DESCRIPTION
-		*	See repo LICENSE and see repo README for details and sources for data loaded here
+		*	See repo LICENSE and README for general information
+		*	See INFO__CMS_ICD_Code_Descriptions for details and sources for files loaded 
+			here and details on what was done to generate the ICD-9 flat files
+			from the Excel files that are available on cms.gov
 		*	Loads table with ICD-9 and ICD-10 diagnosis code descriptions from CMS 
 			releases for Fiscal Years (FY) 2010-2018, available for download from cms.gov,
 			to serve as a simple lookup/reference/dimension table. 
 		*	This is the simple (OPENROWSET) method to import this info.
 			dbo.ICD_Diag_001_Import_Descriptions_AsValues does exactly the same thing,
 			but does not require OPENROWSET permissions (i.e., ADMINISTER BULK OPERATIONS)
-		*	File format/layout that is loaded here:
-			*	ICD_9: one file, bar-delimited format, with both short and long descriptions,
-				with double-quotes surrounding every field. 
-				*	See repo readme for details on what cleaning was applied to generate
-					the flat files with ICD-9 code descriptions (that is, save-as of Excel files)
-					I did not attempt to replicate the file layout of the ICD-10 files
-				*	Note that this file specification escapes any double-quotes within the 
-					descriptions with (e.g., "" if the code description includes a "), so 
-					the insert statement cleans those out again with a REPLACE() function
-			*	ICD_10: one file, fixed-width format, with both short and long descriptions
-				*	The fixed-width format means that no delimiters exist. To account for that,
-					the .fmt file has placeholders (Filler_##) for them, but does not load 
-					them to the permanent output table
-		*	NOTE: The file specification for the ICD-10 order files allows
-			the Code_Desc_Long field to be up to length = 323 (400 - 77), but the
-			observed length in ICD-10 diagnosis files is never longer than 228. You could 
-			reasonably decide to set that field length to something shorter than 323.
+		*	ENCODING NOTE: Git does not like UTF-8 with BOM, but SQL Server may fail to 
+			recognize the accented characters in these code descriptions without BOM.
+			*	I MIGHT have fixed this by setting UTF-8 encoding for .sql and .txt files 
+				in .gitattributes
+			*	To check whether this is an issue, check these diagnosis codes' descriptions
+				Diagnosis_Code IN ('0413', '04671', '38600', '38601', '38602', '38603', '38604')
+			*	Also, just for fun, SQL Server 2014 does provide a UTF-8 codepage (65001),
+				it appears that SQL Server 2012 does not recognize it. Fun times.
+				I added the @Which_CodePage parameter in an attempt to resolve this issue
+				for those using SQL Server 2014 in Windows. If your SQL Server version 
+				doesn't recognize CODEPAGE=65001, then call this with @Which_Codepage = NULL 
+				AFTER the file encoding for all *.txt files within CMS_ICD_Code_Descriptions
+				is set to UTF-8 (or UTF-8 with BOM if required)
 
 	PARAMETERS
 		@Schema_Name (Required, if other than default of 'dbo')
@@ -58,16 +65,27 @@ BEGIN
 		@Table_Action (Required, if other than default of 'DROP_CREATE')
 			Valid Values: 'DROP_CREATE', 'TRUNCATE', 'DELETE_ICD9', 'DELETE_ICD10'
 			Specifies what to do with the permanent output table.
-			DROP_CREATE: Drop it (if it already exists) and recreate it.
-			TRUNCATE: Truncates the table, which must already exist
-			DELETE_ICD9 or DELETE_ICD10: Deletes any codes for the specified ICD version
-			from the table, which must already exist
+			*	DROP_CREATE: Drop it (if it already exists) and recreate it.
+			*	TRUNCATE: Truncates the table, which must already exist
+			*	DELETE_ICD9 or DELETE_ICD10: Deletes any codes for the specified ICD 
+				version from the table, which must already exist
+			NOTE: If you call this with anything other than DROP_CREATE and the
+			table exists, then the @FieldNm_... parameters MUST match the 
+			field names in the existing table.
 		@Which_ICD_Version_To_Load (Required, if other than default of 'ALL')
 			Valid Values: 'ALL', '9', '09', '10'
 			Specifies which ICD-version codes should be loaded, defaults to loading all
 		@Source_File_Dir
 			Required input parameter. The location of the CMS_ICD_Code_Descriptions
 			subdirectory
+		@Which_CodePage:
+			Optional input parameter. Call it with 65001 for SQL Server 2014 and beyond.
+			If that encoding is not recognized, then if you use Windows, you may need to 
+			save all of the .txt with encoding = UTF-8 with BOM. See encoding note above.
+		@FieldNm_... parameters: Optional, if other than defaulted values.
+			Valid values: In SQL Server, Any field name that is legal (e.g., either no
+			special characters or is enclosed by [] and not a reserved name)
+			Use these customize the field names in the final output table
 
 	WHAT THIS PROCEDURE DOES
 		*	Dependent on which @Table_Action is invoked, prepare the permanent output 
@@ -88,6 +106,19 @@ BEGIN
 			'C:\Users\Nicole\Documents\GitHub\CMS_MS_DRG_Grouper_Help\CMS_ICD_Code_Descriptions'
 
 	CHANGE LOG
+		2018.03.11 NLM
+			*	Edited documentation to accommodate the new directory INFO__ file
+			*	Added @FieldNm_... parameters to allow customizing the field names
+				in the final output table.
+			*	Probable fix for UTF-8 encoding issues: discovered during testing 
+				in SQL Server 2012 with a clean repository from GitHub.
+				*	Added note on Windows vs. UTF-8 encoding issue that may affect
+					the code descriptions for a handful of ICD-9 codes
+				*	Added @Which_CodePage parameter to force Windows (for SQL Server 2014+)
+					to use UTF-8 encoding during OPENROWSET
+			*	Outside of this SP, changed the line delimiter for the .fmt files
+				called here. Git's default gitattributes normalizes all Windows-style
+				line endings (\r\n) to *nix ending (\n). D'oh!
 		2018.02.25 NLM
 			*	Minor fixes to documentation in change log vs. code body. *sigh*
 		2018.02.18 NLM
@@ -146,17 +177,17 @@ BEGIN
 			DROP TABLE ' + @Schema_Name + '.' + @Table_Name + '
 		END
 		CREATE TABLE ' + @Schema_Name + '.' + @Table_Name + '(
-			 CMS_Fiscal_Year  INT            NOT NULL
-			,Effective_Date   DATE           NOT NULL
-			,End_Date         DATE           NOT NULL
-			,ICD_Version      INT            NOT NULL
-			,Diagnosis_Code   VARCHAR(7)     NOT NULL
-			,Code_Desc_Short  VARCHAR(60)    NOT NULL
-			,Code_Desc_Long   VARCHAR(323)   NOT NULL
+			 ' + @FieldNm_CMS_Fiscal_Year + '  INT            NOT NULL
+			,' + @FieldNm_Effective_Date + '   DATE           NOT NULL
+			,' + @FieldNm_End_Date + '         DATE           NOT NULL
+			,' + @FieldNm_ICD_Version + '      INT            NOT NULL
+			,' + @FieldNm_ICD_Code + '         VARCHAR(7)     NOT NULL
+			,' + @FieldNm_Code_Desc_Short + '  VARCHAR(60)    NOT NULL
+			,' + @FieldNm_Code_Desc_Long + '   VARCHAR(323)   NOT NULL
 			,CONSTRAINT PK_' + @Table_Name + ' PRIMARY KEY (
-				 CMS_Fiscal_Year
-				,ICD_Version
-				,Diagnosis_Code
+				 ' + @FieldNm_CMS_Fiscal_Year + '
+				,' + @FieldNm_ICD_Version + '
+				,' + @FieldNm_ICD_Code + '
 			)
 		);'
 
@@ -179,7 +210,7 @@ BEGIN
 
 		SET @SQL = '
 		DELETE FROM ' + @Schema_Name + '.' + @Table_Name 
-		+ ' WHERE ICD_Version = 9 '
+		+ ' WHERE ' + @FieldNm_ICD_Version + ' = 9 '
 
 		EXEC(@SQL)
 	END
@@ -190,7 +221,7 @@ BEGIN
 
 		SET @SQL = '
 		DELETE FROM ' + @Schema_Name + '.' + @Table_Name 
-		+ ' WHERE ICD_Version = 10 '
+		+ ' WHERE ' + @FieldNm_ICD_Version + ' = 9 '
 
 		EXEC(@SQL)
 	END
@@ -297,23 +328,24 @@ BEGIN
 		BEGIN
 
 			SET @SQL = '
-			INSERT INTO ' + @Schema_Name + '.' + @Table_Name + '(
-				 ICD_Version
-				,CMS_Fiscal_Year
-				,Effective_Date
-				,End_Date
-				,Diagnosis_Code
-				,Code_Desc_Short
-				,Code_Desc_Long
+			INSERT INTO ' + @Schema_Name + '.' + @Table_Name + '( '
+				+ @FieldNm_ICD_Version
+				+ ',' + @FieldNm_CMS_Fiscal_Year
+				+ ',' + @FieldNm_Effective_Date
+				+ ',' + @FieldNm_End_Date
+				+ ',' + @FieldNm_ICD_Code
+				+ ',' + @FieldNm_Code_Desc_Short
+				+ ',' + @FieldNm_Code_Desc_Long + '
 			)
 			SELECT 
-				' + @This_ICD_Version + ' AS ICD_Version
-				,' + @This_CMS_FY + ' AS CMS_Fiscal_Year
-				,''' + @This_Effective_Date + ''' AS Effective_Date
-				,''' + @This_End_Date + ''' AS End_Date
-				,SUBSTRING(LTRIM(RTRIM(src.ICD_Code)), 1, 5) AS Diagnosis_Code
-				,SUBSTRING(LTRIM(RTRIM(REPLACE(src.Code_Desc_Short, ''""'', ''"''))), 1, 60) AS Code_Desc_Short
-				,SUBSTRING(LTRIM(RTRIM(REPLACE(src.Code_Desc_Long, ''""'', ''"''))), 1, 323) AS Code_Desc_Long
+				' + @This_ICD_Version + ' AS ' + @FieldNm_ICD_Version
+				+ ',' + @This_CMS_FY + ' AS ' + @FieldNm_CMS_Fiscal_Year
+				+ ',''' + @This_Effective_Date + ''' AS ' + @FieldNm_Effective_Date
+				+ ',''' + @This_End_Date + ''' AS ' + @FieldNm_End_Date
+				+ ',SUBSTRING(LTRIM(RTRIM(src.ICD_Code)), 1, 5) AS ' + @FieldNm_ICD_Code
+				+ ',SUBSTRING(LTRIM(RTRIM(REPLACE(src.Code_Desc_Short, ''""'', ''"''))), 1, 60) AS ' + @FieldNm_Code_Desc_Short
+				+ ',SUBSTRING(LTRIM(RTRIM(REPLACE(src.Code_Desc_Long, ''""'', ''"''))), 1, 323) AS ' + @FieldNm_Code_Desc_Long
+			+ '
 			FROM OPENROWSET(
 				BULK ''' + @Source_File_Dir + '\ICD_9\' + @This_CMS_File_Name
 				+ '''
@@ -322,7 +354,8 @@ BEGIN
 				,ERRORFILE = ''' + @Source_File_Dir + '\ICD_9\Errorfile_Diag_FY' + @This_CMS_FY + '.err'''
 				+ '
 				,FIRSTROW = 2
-				,CODEPAGE = 65001
+				' + CASE WHEN @Which_CodePage IS NOT NULL THEN ',CODEPAGE = ' + @Which_CodePage ELSE '' END
+				+ '
 			) AS src 
 			;'
 
@@ -332,23 +365,24 @@ BEGIN
 		BEGIN
 
 			SET @SQL = '
-			INSERT INTO ' + @Schema_Name + '.' + @Table_Name + '(
-				 ICD_Version
-				,CMS_Fiscal_Year
-				,Effective_Date
-				,End_Date
-				,Diagnosis_Code
-				,Code_Desc_Short
-				,Code_Desc_Long
+			INSERT INTO ' + @Schema_Name + '.' + @Table_Name + '( '
+				 + @FieldNm_ICD_Version
+				+ ',' + @FieldNm_CMS_Fiscal_Year
+				+ ',' + @FieldNm_Effective_Date
+				+ ',' + @FieldNm_End_Date
+				+ ',' + @FieldNm_ICD_Code
+				+ ',' + @FieldNm_Code_Desc_Short
+				+ ',' + @FieldNm_Code_Desc_Long + '
 			)
 			SELECT 
-				' + @This_ICD_Version + ' AS ICD_Version
-				,' + @This_CMS_FY + ' AS CMS_Fiscal_Year
-				,''' + @This_Effective_Date + ''' AS Effective_Date
-				,''' + @This_End_Date + ''' AS End_Date
-				,SUBSTRING(LTRIM(RTRIM(src.ICD_Code)), 1, 7) AS Diagnosis_Code
-				,SUBSTRING(LTRIM(RTRIM(src.Code_Desc_Short)), 1, 60) AS Code_Desc_Short
-				,SUBSTRING(LTRIM(RTRIM(src.Code_Desc_Long)), 1, 323) AS Code_Desc_Long
+				' + @This_ICD_Version + ' AS ' + @FieldNm_ICD_Version
+				+ ',' + @This_CMS_FY + ' AS ' + @FieldNm_CMS_Fiscal_Year
+				+ ',''' + @This_Effective_Date + ''' AS ' + @FieldNm_Effective_Date
+				+ ',''' + @This_End_Date + ''' AS ' + @FieldNm_End_Date
+				+ ',SUBSTRING(LTRIM(RTRIM(src.ICD_Code)), 1, 7) AS ' + @FieldNm_ICD_Code
+				+ ',SUBSTRING(LTRIM(RTRIM(src.Code_Desc_Short)), 1, 60) AS ' + @FieldNm_Code_Desc_Short
+				+ ',SUBSTRING(LTRIM(RTRIM(src.Code_Desc_Long)), 1, 323) AS ' + @FieldNm_Code_Desc_Long
+			+ '
 			FROM OPENROWSET(
 				BULK ''' + @Source_File_Dir + '\ICD_10\' + @This_CMS_File_Name
 				+ '''
@@ -357,7 +391,8 @@ BEGIN
 				,ERRORFILE = ''' + @Source_File_Dir + '\ICD_10\Errorfile_Diag_FY' + @This_CMS_FY + '.err'''
 				+ '
 				,FIRSTROW = 1
-				,CODEPAGE = 65001
+				' + CASE WHEN @Which_CodePage IS NOT NULL THEN ',CODEPAGE = ' + @Which_CodePage ELSE '' END
+				+ '
 			) AS src 
 			WHERE 
 				Code_Is_HIPAA_Valid = ''1''

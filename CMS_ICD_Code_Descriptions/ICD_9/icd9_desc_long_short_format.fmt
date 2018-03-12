@@ -1,6 +1,6 @@
 11.0  
 4 
-1 SQLCHAR 0   1 "\""       0 Qualifier_1      ""
+1 SQLCHAR 0   1 "\""       0 Filler_01      ""
 2 SQLCHAR 0   7 "\"|\""    1 ICD_Code   ""
 3 SQLCHAR 0   323 "\"|\""  3 Code_Desc_Long   ""
-4 SQLCHAR 0   60 "\"\r\n"  2 Code_Desc_Short  ""
+4 SQLCHAR 0   60 "\"n"     2 Code_Desc_Short  ""

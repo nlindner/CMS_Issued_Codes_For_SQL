@@ -1,9 +1,10 @@
 11.0  
-7 
+8 
 1  SQLCHAR  0  2  "\t"    5  MCE_Version   ""
-2  SQLCHAR  0  2  "\t"    1  ICD_Version          ""
-3  SQLCHAR  0  4  "\t"    6  MCE_Section          SQL_Latin1_General_CP1_CI_AS  
-4  SQLCHAR  0  32 "\t"    7  MCE_Exclusion_Type  SQL_Latin1_General_CP1_CI_AS  
-5  SQLCHAR  0  1  "\t"    2  ICD_Code_Type        SQL_Latin1_General_CP1_CI_AS  
-6  SQLCHAR  0  7  "\t"    3  ICD_Code             SQL_Latin1_General_CP1_CI_AS  
-7  SQLCHAR  0  64 "\r\n"  4  ICD_Code_Desc        SQL_Latin1_General_CP1_CI_AS  
+2  SQLCHAR  0  2  "\t"    1  ICD_Version    ""
+3  SQLCHAR  0  2  "\t"    6  MCE_Section    SQL_Latin1_General_CP1_CI_AS  
+4  SQLCHAR  0  2  "\t"    7  MCE_Section    SQL_Latin1_General_CP1_CI_AS  
+5  SQLCHAR  0  32 "\t"    8  MCE_Edit_Type  SQL_Latin1_General_CP1_CI_AS  
+6  SQLCHAR  0  1  "\t"    2  ICD_Code_Type  SQL_Latin1_General_CP1_CI_AS  
+7  SQLCHAR  0  7  "\t"    3  ICD_Code       SQL_Latin1_General_CP1_CI_AS  
+8  SQLCHAR  0  64 "\n"  4  ICD_Code_Desc  SQL_Latin1_General_CP1_CI_AS  

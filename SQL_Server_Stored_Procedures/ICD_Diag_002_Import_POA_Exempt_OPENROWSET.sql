@@ -27,22 +27,18 @@ BEGIN
 		ICD_Diag_002_Import_POA_Exempt_OPENROWSET
 
 	DESCRIPTION
-		*	See repo LICENSE and see repo README for details and sources for data loaded here
-			*	See the repo README for an explanation of why FY 2012 is loaded for both 2012
-				and 2013 and the manual process required to create the FY 2011 file from 
-				the PDF available at cms.gov
+		*	See repo LICENSE and README for general information
+		*	See INFO__CMS_ICD_Diagnoses_POA_Exempt for details and sources for files 
+			loaded  here, an explanation of why FY 2012 is loaded for both 2012 and 2013,
+			and the manual process required to create the FY 2011 file from the PDF 
+			available at cms.gov
 		*	Loads table with ICD-9 and ICD-10 diagnosis codes exempt from Present on 
-			Admission (POA) reporting, based on files available for download from cms.gov, 
-			for CMS Fiscal Years (FY) 2011-2018
+			Admission (POA) reporting for CMS Fiscal Years (FY) 2011-2018
 		*	This is the simple (OPENROWSET) method to import this info.
 			dbo.ICD_Diag_002_Import_POA_Exempt_AsValues does exactly the same thing,
 			but does not require OPENROWSET permissions (i.e., ADMINISTER BULK OPERATIONS)
 		*	This is designed to load those flat files to a SQL Server table. In the bulk load
 			process, additional standardization is being applied as the files are loaded.
-			*	the ICD-10 POA files surround the Code_Desc_Long with double-quotes as
-				text qualifiers to escape special characters. SQL Server does not recognize 
-				that feature of the de facto .csv file standard, so a REPLACE() function 
-				is used to strip those out during load.
 
 	PARAMETERS
 		@Schema_Name (Required, if other than default of 'dbo')
@@ -85,12 +81,14 @@ BEGIN
 			'C:\Users\Nicole\Documents\GitHub\CMS_MS_DRG_Grouper_Help\CMS_ICD_Diagnoses_POA_Exempt'
 
 	CHANGE LOG
+		2018.03.11 NLM
+			*	Edited documentation to accommodate the new directory INFO__ file
 		2018.02.18 NLM
 			*	Sigh. Added code to uppercase all ICD diagnosis codes because the
 				ICD-9 files themselves have lowercase v instead of uppercase v.
 				Does not affect SQL Server (defaults to case-insensitive), but this
 				would cause problems for most other SQL dialects
-			*	After search on archive.org (see repo README), added FY 2013
+			*	After search on archive.org (see directory INFO file), added FY 2013
 				Revised documentation here as part of releasing _AsValues version
 				of this SP
 			*	Minor changes to documentation (and spacing), to align similar code logic
