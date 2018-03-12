@@ -11,8 +11,8 @@ This project contains resources for loading SQL Server tables with CMS-issued co
  * [CMS_ICD_Diagnoses_POA_Exempt](../CMS_ICD_Diagnoses_POA_Exempt): CMS releases of ICD diagnosis codes that are exempt from Present On Admission (POA) reporting, for CMS FY 2011-2018.
   	- See [codeset-specific](../INFO__CMS_ICD_Diagnoses_POA_Exempt.md) information
   	- These codesets are loaded via either of the ICD_Diag_002_Import_POA_Exempt... stored procedures
- * [CMS_MCE_Simple_ICD_Code_Edits](../CMS_MCE_Simple_ICD_Code_Edits): Code edits from the MS (Medicare Severity) DRG (Diagnostic Related Group) Grouper software with Medicare Code Editor ([MCE](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/FY2018-IPPS-Final-Rule-Home-Page.html)). This repo contains the "simple" ICD diagnosis and procedure code edits from the Medicare Code Editor documentation, versions 27 (FY 2010) through 35 (FY 2018). 
-  	- See [codeset-specific](../INFO__CMS_MCE_Simple_ICD_Code_Edits.md) information
+ * [CMS_MCE_Simple_ICD_Code_Edits](/CMS_MCE_Simple_ICD_Code_Edits): Code edits from the MS (Medicare Severity) DRG (Diagnostic Related Group) Grouper software with Medicare Code Editor ([MCE](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/FY2018-IPPS-Final-Rule-Home-Page.html)). This repo contains the "simple" ICD diagnosis and procedure code edits from the Medicare Code Editor documentation, versions 27 (FY 2010) through 35 (FY 2018). 
+  	- See [codeset-specific](/INFO__CMS_MCE_Simple_ICD_Code_Edits.md) information
   	- These codesets are loaded via either of the ICD_MCE_001_Import_Simple_Code_Edits... stored procedures
 
 ## Intellectual Property
