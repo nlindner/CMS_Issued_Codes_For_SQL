@@ -43,19 +43,14 @@ BEGIN
 		*	This is the simple (OPENROWSET) method to import this info.
 			dbo.ICD_Diag_001_Import_Descriptions_AsValues does exactly the same thing,
 			but does not require OPENROWSET permissions (i.e., ADMINISTER BULK OPERATIONS)
-		*	ENCODING NOTE: Git does not like UTF-8 with BOM, but SQL Server may fail to 
-			recognize the accented characters in these code descriptions without BOM.
-			*	I MIGHT have fixed this by setting UTF-8 encoding for .sql and .txt files 
-				in .gitattributes
+		*	ENCODING NOTE: This repo is set so that Windows will import the handful of 
+			descriptions that have accented characters. I tried LF ending and UTF-8
+			(with or without BOM), but Git and SQL Server (including 2012, which doesn't
+			recognize UTF-8 CodePage of 65001) weren't playing nicely together.
+			I think I've fixed this via .gitattributes (CRLF line endings and Latin 1252
+			encoding).
 			*	To check whether this is an issue, check these diagnosis codes' descriptions
 				Diagnosis_Code IN ('0413', '04671', '38600', '38601', '38602', '38603', '38604')
-			*	Also, just for fun, SQL Server 2014 does provide a UTF-8 codepage (65001),
-				it appears that SQL Server 2012 does not recognize it. Fun times.
-				I added the @Which_CodePage parameter in an attempt to resolve this issue
-				for those using SQL Server 2014 in Windows. If your SQL Server version 
-				doesn't recognize CODEPAGE=65001, then call this with @Which_Codepage = NULL 
-				AFTER the file encoding for all *.txt files within CMS_ICD_Code_Descriptions
-				is set to UTF-8 (or UTF-8 with BOM if required)
 
 	PARAMETERS
 		@Schema_Name (Required, if other than default of 'dbo')
@@ -78,10 +73,6 @@ BEGIN
 		@Source_File_Dir
 			Required input parameter. The location of the CMS_ICD_Code_Descriptions
 			subdirectory
-		@Which_CodePage:
-			Optional input parameter. Call it with 65001 for SQL Server 2014 and beyond.
-			If that encoding is not recognized, then if you use Windows, you may need to 
-			save all of the .txt with encoding = UTF-8 with BOM. See encoding note above.
 		@FieldNm_... parameters: Optional, if other than defaulted values.
 			Valid values: In SQL Server, Any field name that is legal (e.g., either no
 			special characters or is enclosed by [] and not a reserved name)
@@ -106,19 +97,15 @@ BEGIN
 			'C:\Users\Nicole\Documents\GitHub\CMS_MS_DRG_Grouper_Help\CMS_ICD_Code_Descriptions'
 
 	CHANGE LOG
+		2018.05.12 NLM
+			*	Think I resolved the encoding issues via GitAttributes, so removed
+				the @Which_CodePage input parameter
 		2018.03.11 NLM
 			*	Edited documentation to accommodate the new directory INFO__ file
 			*	Added @FieldNm_... parameters to allow customizing the field names
 				in the final output table.
-			*	Probable fix for UTF-8 encoding issues: discovered during testing 
-				in SQL Server 2012 with a clean repository from GitHub.
-				*	Added note on Windows vs. UTF-8 encoding issue that may affect
-					the code descriptions for a handful of ICD-9 codes
-				*	Added @Which_CodePage parameter to force Windows (for SQL Server 2014+)
-					to use UTF-8 encoding during OPENROWSET
-			*	Outside of this SP, changed the line delimiter for the .fmt files
-				called here. Git's default gitattributes normalizes all Windows-style
-				line endings (\r\n) to *nix ending (\n). D'oh!
+			*	Unsuccessful attempt to fix UTF-8 encoding issues. Changes made here
+				are reverted (and this issue is fixed) by the 2018.05.12 release.
 		2018.02.25 NLM
 			*	Minor fixes to documentation in change log vs. code body. *sigh*
 		2018.02.18 NLM
@@ -354,8 +341,6 @@ BEGIN
 				,ERRORFILE = ''' + @Source_File_Dir + '\ICD_9\Errorfile_Diag_FY' + @This_CMS_FY + '.err'''
 				+ '
 				,FIRSTROW = 2
-				' + CASE WHEN @Which_CodePage IS NOT NULL THEN ',CODEPAGE = ' + @Which_CodePage ELSE '' END
-				+ '
 			) AS src 
 			;'
 
@@ -391,8 +376,6 @@ BEGIN
 				,ERRORFILE = ''' + @Source_File_Dir + '\ICD_10\Errorfile_Diag_FY' + @This_CMS_FY + '.err'''
 				+ '
 				,FIRSTROW = 1
-				' + CASE WHEN @Which_CodePage IS NOT NULL THEN ',CODEPAGE = ' + @Which_CodePage ELSE '' END
-				+ '
 			) AS src 
 			WHERE 
 				Code_Is_HIPAA_Valid = ''1''

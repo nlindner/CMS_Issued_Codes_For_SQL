@@ -1,5 +1,6 @@
 # Auto detect text files and perform LF normalization
-* text=auto
+# Microsoft products (e.g., SQL Server, Windows) seem to dislike UTF-8. So we'll just roll with Windows endings/etc. in this repo
+* text eol=crlf
 
 
 # Custom for Visual Studio
@@ -17,11 +18,9 @@
 *.rtf	 diff=astextplain
 *.RTF	 diff=astextplain
 
-# Custom for SQL Server .fmt files *sigh*
-*.fmt  text eol=crlf
-
-# Custom so the ICD code descriptions with accented characters will be imported correctly and line endings are consistent
-*.txt encoding=UTF-8 eol=lf
-*.sql encoding=UTF-8 eol=lf
-*.md eol=lf
-*.MD eol=lf
+# Force so the ICD code descriptions with accented characters will be imported correctly and line endings are consistent
+*.fmt text eol=crlf encoding=cp1252
+*.txt text eol=crlf encoding=cp1252
+*.sql text eol=crlf encoding=cp1252
+*.md eol=crlf
+*.MD eol=crlf
