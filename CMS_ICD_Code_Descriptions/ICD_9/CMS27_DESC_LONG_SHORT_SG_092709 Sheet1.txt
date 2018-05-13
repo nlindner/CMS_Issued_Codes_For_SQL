@@ -1,4 +1,4 @@
-﻿"PROCEDURE CODE"|"LONG DESCRIPTION"|"SHORT DESCRIPTION"
+"PROCEDURE CODE"|"LONG DESCRIPTION"|"SHORT DESCRIPTION"
 "0001"|"Therapeutic ultrasound of vessels of head and neck"|"Ther ult head & neck ves"
 "0002"|"Therapeutic ultrasound of heart"|"Ther ultrasound of heart"
 "0003"|"Therapeutic ultrasound of peripheral vascular vessels"|"Ther ult peripheral ves"

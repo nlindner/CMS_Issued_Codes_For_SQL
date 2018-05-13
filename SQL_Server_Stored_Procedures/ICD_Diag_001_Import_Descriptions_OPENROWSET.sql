@@ -15,7 +15,6 @@ ALTER PROCEDURE dbo.ICD_Diag_001_Import_Descriptions_OPENROWSET (
 	,@Table_Action                  VARCHAR(16)    = 'DROP_CREATE'
 	,@Which_ICD_Version_To_Load     VARCHAR(3)     = 'ALL'
 	,@Source_File_Dir               VARCHAR(1000)  = NULL
-	,@Which_CodePage                VARCHAR(10)    = NULL
 	,@FieldNm_CMS_Fiscal_Year       VARCHAR(100)   = 'CMS_Fiscal_Year'
 	,@FieldNm_Effective_Date        VARCHAR(100)   = 'Effective_Date'
 	,@FieldNm_End_Date              VARCHAR(100)   = 'End_Date'
@@ -97,7 +96,7 @@ BEGIN
 			'C:\Users\Nicole\Documents\GitHub\CMS_MS_DRG_Grouper_Help\CMS_ICD_Code_Descriptions'
 
 	CHANGE LOG
-		2018.05.12 NLM
+		2018.05.13 NLM
 			*	Think I resolved the encoding issues via GitAttributes, so removed
 				the @Which_CodePage input parameter
 		2018.03.11 NLM

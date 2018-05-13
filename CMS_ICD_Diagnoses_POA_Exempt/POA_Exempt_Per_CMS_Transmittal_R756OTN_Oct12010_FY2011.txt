@@ -849,7 +849,7 @@ E8298	Other road vehicle accidents injuring other specified person
 E8299	Other road vehicle accidents injuring unspecified person 
 E8300	Accident to watercraft causing submersion injuring occupant of small boat, unpowered 
 E8301	Accident to watercraft causing submersion injuring occupant of small boat, powered 
-E8302	Accident to watercraft causing submersion injuring occupant of other watercraft â€“ crew 
+E8302	Accident to watercraft causing submersion injuring occupant of other watercraft – crew 
 E8303	Accident to watercraft causing submersion injuring occupant of other watercraft -- other than crew 
 E8304	Accident to watercraft causing submersion njuring water skier 
 E8305	Accident to watercraft causing submersion njuring swimmer 
@@ -879,7 +879,7 @@ E8328	Other accidental submersion or drowning in water transport accident injuri
 E8329	Other accidental submersion or drowning in water transport accident injuring unspecified person 
 E8330	Fall on stairs or ladders in water transport injuring occupant of small boat, unpowered 
 E8331	Fall on stairs or ladders in water transport injuring occupant of small boat, powered 
-E8332	Fall on stairs or ladders in water transport injuring occupant of other watercraft â€“ crew 
+E8332	Fall on stairs or ladders in water transport injuring occupant of other watercraft – crew 
 E8333	Fall on stairs or ladders in water transport injuring occupant of other watercraft -- other than crew 
 E8334	Fall on stairs or ladders in water transport injuring water skier 
 E8335	Fall on stairs or ladders in water transport injuring swimmer 
@@ -899,7 +899,7 @@ E8348	Other fall from one level to another in water transport injuring other spe
 E8349	Other fall from one level to another in water transport injuring unspecified person 
 E8350	Other and unspecified fall in water transport injuring occupant of small boat, unpowered 
 E8351	Other and unspecified fall in water transport injuring occupant of small boat, powered 
-E8352	Other and unspecified fall in water transport injuring occupant of other watercraft â€“ crew 
+E8352	Other and unspecified fall in water transport injuring occupant of other watercraft – crew 
 E8353	Other and unspecified fall in water transport injuring occupant of other watercraft -- other than crew 
 E8354	Other and unspecified fall in water transport injuring water skier 
 E8355	Other and unspecified fall in water transport injuring swimmer 
@@ -919,7 +919,7 @@ E8368	Machinery accident in water transport injuring other specified person
 E8369	Machinery accident in water transport injuring unspecified person 
 E8370	Explosion, fire, or burning in watercraft injuring occupant of small boat, unpowered 
 E8371	Explosion, fire, or burning in watercraft injuring occupant of small boat, powered 
-E8372	Explosion, fire, or burning in watercraft injuring occupant of other watercraft â€“ crew 
+E8372	Explosion, fire, or burning in watercraft injuring occupant of other watercraft – crew 
 E8373	Explosion, fire, or burning in watercraft injuring occupant of other watercraft -- other than crew 
 E8374	Explosion, fire, or burning in watercraft injuring water skier 
 E8375	Explosion, fire, or burning in watercraft injuring swimmer 
