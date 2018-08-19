@@ -584,9 +584,9 @@ MCE_Version	ICD_Version	MCE_Section	MCE_Subsection	MCE_Edit_Type	ICD_Code_Type	I
 26	9	4	C	Maternity_Only	D	64622	Renal dis NOS-del w p/p
 26	9	4	C	Maternity_Only	D	64623	Renal dis NOS-antepartum
 26	9	4	C	Maternity_Only	D	64624	Renal dis NOS-postpartum
-26	9	4	C	Maternity_Only	D	64630	Recur preg loss-unspec
-26	9	4	C	Maternity_Only	D	64631	Recurnt preg loss-deliv
-26	9	4	C	Maternity_Only	D	64633	Recurnt preg loss-antep
+26	9	4	C	Maternity_Only	D	64630	Habitual aborter-unspec
+26	9	4	C	Maternity_Only	D	64631	Habitual aborter-deliver
+26	9	4	C	Maternity_Only	D	64633	Habitual abort-antepart
 26	9	4	C	Maternity_Only	D	64640	Neuritis of preg-unspec
 26	9	4	C	Maternity_Only	D	64641	Neuritis-delivered
 26	9	4	C	Maternity_Only	D	64642	Neuritis-delivered w p/p
@@ -602,9 +602,9 @@ MCE_Version	ICD_Version	MCE_Section	MCE_Subsection	MCE_Edit_Type	ICD_Code_Type	I
 26	9	4	C	Maternity_Only	D	64662	Gu infection-deliv w p/p
 26	9	4	C	Maternity_Only	D	64663	Gu infection-antepartum
 26	9	4	C	Maternity_Only	D	64664	Gu infection-postpartum
-26	9	4	C	Maternity_Only	D	64670	Liver/bil trct disr-unsp
-26	9	4	C	Maternity_Only	D	64671	Liver/bil trct disr-del
-26	9	4	C	Maternity_Only	D	64673	Liver/bil trct disr-ante
+26	9	4	C	Maternity_Only	D	64670	Liver dis in preg-unspec
+26	9	4	C	Maternity_Only	D	64671	Liver disorder-delivered
+26	9	4	C	Maternity_Only	D	64673	Liver disorder-antepart
 26	9	4	C	Maternity_Only	D	64680	Preg compl NEC-unspec
 26	9	4	C	Maternity_Only	D	64681	Preg compl NEC-delivered
 26	9	4	C	Maternity_Only	D	64682	Preg compl NEC-del w p/p
@@ -1849,7 +1849,7 @@ MCE_Version	ICD_Version	MCE_Section	MCE_Subsection	MCE_Edit_Type	ICD_Code_Type	I
 26	9	5	A	Female_Only	D	62922	Genital mutilatn type II
 26	9	5	A	Female_Only	D	62923	Genital muilatn type III
 26	9	5	A	Female_Only	D	62929	Fem genital mutilate NEC
-26	9	5	A	Female_Only	D	62981	Rec preg loss wo cur prg
+26	9	5	A	Female_Only	D	62981	Hab abortr w/o curr preg
 26	9	5	A	Female_Only	D	62989	Female genital disor NEC
 26	9	5	A	Female_Only	D	6299	Female genital dis NOS
 26	9	5	A	Female_Only	D	630	Hydatidiform mole
@@ -2116,9 +2116,9 @@ MCE_Version	ICD_Version	MCE_Section	MCE_Subsection	MCE_Edit_Type	ICD_Code_Type	I
 26	9	5	A	Female_Only	D	64622	Renal dis NOS-del w p/p
 26	9	5	A	Female_Only	D	64623	Renal dis NOS-antepartum
 26	9	5	A	Female_Only	D	64624	Renal dis NOS-postpartum
-26	9	5	A	Female_Only	D	64630	Recur preg loss-unspec
-26	9	5	A	Female_Only	D	64631	Recurnt preg loss-deliv
-26	9	5	A	Female_Only	D	64633	Recurnt preg loss-antep
+26	9	5	A	Female_Only	D	64630	Habitual aborter-unspec
+26	9	5	A	Female_Only	D	64631	Habitual aborter-deliver
+26	9	5	A	Female_Only	D	64633	Habitual abort-antepart
 26	9	5	A	Female_Only	D	64640	Neuritis of preg-unspec
 26	9	5	A	Female_Only	D	64641	Neuritis-delivered
 26	9	5	A	Female_Only	D	64642	Neuritis-delivered w p/p
@@ -2134,9 +2134,9 @@ MCE_Version	ICD_Version	MCE_Section	MCE_Subsection	MCE_Edit_Type	ICD_Code_Type	I
 26	9	5	A	Female_Only	D	64662	Gu infection-deliv w p/p
 26	9	5	A	Female_Only	D	64663	Gu infection-antepartum
 26	9	5	A	Female_Only	D	64664	Gu infection-postpartum
-26	9	5	A	Female_Only	D	64670	Liver/bil trct disr-unsp
-26	9	5	A	Female_Only	D	64671	Liver/bil trct disr-del
-26	9	5	A	Female_Only	D	64673	Liver/bil trct disr-ante
+26	9	5	A	Female_Only	D	64670	Liver dis in preg-unspec
+26	9	5	A	Female_Only	D	64671	Liver disorder-delivered
+26	9	5	A	Female_Only	D	64673	Liver disorder-antepart
 26	9	5	A	Female_Only	D	64680	Preg compl NEC-unspec
 26	9	5	A	Female_Only	D	64681	Preg compl NEC-delivered
 26	9	5	A	Female_Only	D	64682	Preg compl NEC-del w p/p
@@ -3543,9 +3543,9 @@ MCE_Version	ICD_Version	MCE_Section	MCE_Subsection	MCE_Edit_Type	ICD_Code_Type	I
 26	9	5	C	Male_Only	D	V1047	Hx-testicular malignancy
 26	9	5	C	Male_Only	D	V1048	Hx-epididymis malignancy
 26	9	5	C	Male_Only	D	V1049	Hx-male genit malig NEC
-26	9	5	C	Male_Only	D	V1361	Hx-hypospadias
+26	9	5	C	Male_Only	D	V1361	Hx-hypospadius
 26	9	5	C	Male_Only	D	V2634	Male genetc test dis car
-26	9	5	C	Male_Only	D	V2635	Test male/fem preg loss
+26	9	5	C	Male_Only	D	V2635	Test male part hab abort
 26	9	5	C	Male_Only	D	V2639	Male genetic test NEC
 26	9	5	C	Male_Only	D	V2652	Vasectomy status
 26	9	5	C	Male_Only	D	V502	Routine circumcision
@@ -3682,8 +3682,8 @@ MCE_Version	ICD_Version	MCE_Section	MCE_Subsection	MCE_Edit_Type	ICD_Code_Type	I
 26	9	6	_	Principal_Manifestation	D	32302	Myelitis-oth viral dis
 26	9	6	_	Principal_Manifestation	D	3231	Rickettsial encephalitis
 26	9	6	_	Principal_Manifestation	D	3232	Protozoal encephalitis
-26	9	6	_	Principal_Manifestation	D	32341	Ot encph/mye ot inf else
-26	9	6	_	Principal_Manifestation	D	32342	Oth myelitis ot inf else
+26	9	6	_	Principal_Manifestation	D	32341	Enceph/myelitis-oth inf
+26	9	6	_	Principal_Manifestation	D	32342	Myelitis d/t oth infect
 26	9	6	_	Principal_Manifestation	D	32361	Inf ac dis encephalomyel
 26	9	6	_	Principal_Manifestation	D	32362	Postinf encephalitis NEC
 26	9	6	_	Principal_Manifestation	D	32363	Postinfectious myelitis
@@ -4051,10 +4051,10 @@ MCE_Version	ICD_Version	MCE_Section	MCE_Subsection	MCE_Edit_Type	ICD_Code_Type	I
 26	9	9	_	Principal_Unacceptable	D	V072	Prophylact immunotherapy
 26	9	9	_	Principal_Unacceptable	D	V0731	Prophylac fluoride admin
 26	9	9	_	Principal_Unacceptable	D	V074	Hormone replace postmeno
-26	9	9	_	Principal_Unacceptable	D	V0751	Use of SERMs
-26	9	9	_	Principal_Unacceptable	D	V0752	Use aromatase inhibitors
-26	9	9	_	Principal_Unacceptable	D	V0759	Use oth agnt af estrogen
-26	9	9	_	Principal_Unacceptable	D	V079	Prophyl or tx meas NOS
+26	9	9	_	Principal_Unacceptable	D	V0751	Prophylactic use SERMs
+26	9	9	_	Principal_Unacceptable	D	V0752	Prophylact use aromatase
+26	9	9	_	Principal_Unacceptable	D	V0759	Prphyl ot agnt af estrgn
+26	9	9	_	Principal_Unacceptable	D	V079	Prophylactic measure NOS
 26	9	9	_	Principal_Unacceptable	D	V090	Inf mcrg rstn pncllins
 26	9	9	_	Principal_Unacceptable	D	V091	Inf mcrg rstn b-lactam
 26	9	9	_	Principal_Unacceptable	D	V092	Inf mcrg rstn macrolides
@@ -4165,7 +4165,7 @@ MCE_Version	ICD_Version	MCE_Section	MCE_Subsection	MCE_Edit_Type	ICD_Code_Type	I
 26	9	9	_	Principal_Unacceptable	D	V1351	Hx pathological fracture
 26	9	9	_	Principal_Unacceptable	D	V1352	Hx stress fracture
 26	9	9	_	Principal_Unacceptable	D	V1359	Hx musculoskletl dis NEC
-26	9	9	_	Principal_Unacceptable	D	V1361	Hx-hypospadias
+26	9	9	_	Principal_Unacceptable	D	V1361	Hx-hypospadius
 26	9	9	_	Principal_Unacceptable	D	V1369	Hx-congenital malfor NEC
 26	9	9	_	Principal_Unacceptable	D	V137	Hx-perinatal problems
 26	9	9	_	Principal_Unacceptable	D	V138	Hx of diseases NEC
@@ -4245,7 +4245,7 @@ MCE_Version	ICD_Version	MCE_Section	MCE_Subsection	MCE_Edit_Type	ICD_Code_Type	I
 26	9	9	_	Principal_Unacceptable	D	V1819	Fm hx endo/metab dis NEC
 26	9	9	_	Principal_Unacceptable	D	V182	Family hx-anemia
 26	9	9	_	Principal_Unacceptable	D	V183	Fam hx-blood disord NEC
-26	9	9	_	Principal_Unacceptable	D	V184	Fm hx-intellect disablty
+26	9	9	_	Principal_Unacceptable	D	V184	Fam hx-mental retardat
 26	9	9	_	Principal_Unacceptable	D	V1851	Family hx colonic polyps
 26	9	9	_	Principal_Unacceptable	D	V1859	Fam hx digest disord NEC
 26	9	9	_	Principal_Unacceptable	D	V1861	Fam hx-polycystic kidney
@@ -4320,7 +4320,7 @@ MCE_Version	ICD_Version	MCE_Section	MCE_Subsection	MCE_Edit_Type	ICD_Code_Type	I
 26	9	9	_	Principal_Unacceptable	D	V2632	Female genetic test NEC
 26	9	9	_	Principal_Unacceptable	D	V2633	Genetic counseling
 26	9	9	_	Principal_Unacceptable	D	V2634	Male genetc test dis car
-26	9	9	_	Principal_Unacceptable	D	V2635	Test male/fem preg loss
+26	9	9	_	Principal_Unacceptable	D	V2635	Test male part hab abort
 26	9	9	_	Principal_Unacceptable	D	V2639	Male genetic test NEC
 26	9	9	_	Principal_Unacceptable	D	V2641	Natrl family plan counsl
 26	9	9	_	Principal_Unacceptable	D	V2642	Fertlity preserv counsel
@@ -4744,7 +4744,7 @@ MCE_Version	ICD_Version	MCE_Section	MCE_Subsection	MCE_Edit_Type	ICD_Code_Type	I
 26	9	9	_	Principal_Unacceptable	D	V789	Screen-blood dis NOS
 26	9	9	_	Principal_Unacceptable	D	V790	Screening for depression
 26	9	9	_	Principal_Unacceptable	D	V791	Screening for alcoholism
-26	9	9	_	Principal_Unacceptable	D	V792	Scrn intellect disabilty
+26	9	9	_	Principal_Unacceptable	D	V792	Screen-mental retardat
 26	9	9	_	Principal_Unacceptable	D	V793	Screen-development prob
 26	9	9	_	Principal_Unacceptable	D	V798	Screen-mental dis NEC
 26	9	9	_	Principal_Unacceptable	D	V799	Screen-mental dis NOS

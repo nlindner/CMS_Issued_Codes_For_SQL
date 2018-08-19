@@ -603,9 +603,9 @@ MCE_Version	ICD_Version	MCE_Section	MCE_Subsection	MCE_Edit_Type	ICD_Code_Type	I
 27	9	4	C	Maternity_Only	D	64662	Gu infection-deliv w p/p
 27	9	4	C	Maternity_Only	D	64663	Gu infection-antepartum
 27	9	4	C	Maternity_Only	D	64664	Gu infection-postpartum
-27	9	4	C	Maternity_Only	D	64670	Liver/bil trct disr-unsp
-27	9	4	C	Maternity_Only	D	64671	Liver/bil trct disr-del
-27	9	4	C	Maternity_Only	D	64673	Liver/bil trct disr-ante
+27	9	4	C	Maternity_Only	D	64670	Liver dis in preg-unspec
+27	9	4	C	Maternity_Only	D	64671	Liver disorder-delivered
+27	9	4	C	Maternity_Only	D	64673	Liver disorder-antepart
 27	9	4	C	Maternity_Only	D	64680	Preg compl NEC-unspec
 27	9	4	C	Maternity_Only	D	64681	Preg compl NEC-delivered
 27	9	4	C	Maternity_Only	D	64682	Preg compl NEC-del w p/p
@@ -2157,9 +2157,9 @@ MCE_Version	ICD_Version	MCE_Section	MCE_Subsection	MCE_Edit_Type	ICD_Code_Type	I
 27	9	5	A	Female_Only	D	64662	Gu infection-deliv w p/p
 27	9	5	A	Female_Only	D	64663	Gu infection-antepartum
 27	9	5	A	Female_Only	D	64664	Gu infection-postpartum
-27	9	5	A	Female_Only	D	64670	Liver/bil trct disr-unsp
-27	9	5	A	Female_Only	D	64671	Liver/bil trct disr-del
-27	9	5	A	Female_Only	D	64673	Liver/bil trct disr-ante
+27	9	5	A	Female_Only	D	64670	Liver dis in preg-unspec
+27	9	5	A	Female_Only	D	64671	Liver disorder-delivered
+27	9	5	A	Female_Only	D	64673	Liver disorder-antepart
 27	9	5	A	Female_Only	D	64680	Preg compl NEC-unspec
 27	9	5	A	Female_Only	D	64681	Preg compl NEC-delivered
 27	9	5	A	Female_Only	D	64682	Preg compl NEC-del w p/p
@@ -3737,8 +3737,8 @@ MCE_Version	ICD_Version	MCE_Section	MCE_Subsection	MCE_Edit_Type	ICD_Code_Type	I
 27	9	6	_	Principal_Manifestation	D	32302	Myelitis-oth viral dis
 27	9	6	_	Principal_Manifestation	D	3231	Rickettsial encephalitis
 27	9	6	_	Principal_Manifestation	D	3232	Protozoal encephalitis
-27	9	6	_	Principal_Manifestation	D	32341	Ot encph/mye ot inf else
-27	9	6	_	Principal_Manifestation	D	32342	Oth myelitis ot inf else
+27	9	6	_	Principal_Manifestation	D	32341	Enceph/myelitis-oth inf
+27	9	6	_	Principal_Manifestation	D	32342	Myelitis d/t oth infect
 27	9	6	_	Principal_Manifestation	D	32361	Inf ac dis encephalomyel
 27	9	6	_	Principal_Manifestation	D	32362	Postinf encephalitis NEC
 27	9	6	_	Principal_Manifestation	D	32363	Postinfectious myelitis
@@ -4312,7 +4312,7 @@ MCE_Version	ICD_Version	MCE_Section	MCE_Subsection	MCE_Edit_Type	ICD_Code_Type	I
 27	9	9	_	Principal_Unacceptable	D	V1819	Fm hx endo/metab dis NEC
 27	9	9	_	Principal_Unacceptable	D	V182	Family hx-anemia
 27	9	9	_	Principal_Unacceptable	D	V183	Fam hx-blood disord NEC
-27	9	9	_	Principal_Unacceptable	D	V184	Fm hx-intellect disablty
+27	9	9	_	Principal_Unacceptable	D	V184	Fam hx-mental retardat
 27	9	9	_	Principal_Unacceptable	D	V1851	Family hx colonic polyps
 27	9	9	_	Principal_Unacceptable	D	V1859	Fam hx digest disord NEC
 27	9	9	_	Principal_Unacceptable	D	V1861	Fam hx-polycystic kidney
@@ -4816,7 +4816,7 @@ MCE_Version	ICD_Version	MCE_Section	MCE_Subsection	MCE_Edit_Type	ICD_Code_Type	I
 27	9	9	_	Principal_Unacceptable	D	V789	Screen-blood dis NOS
 27	9	9	_	Principal_Unacceptable	D	V790	Screening for depression
 27	9	9	_	Principal_Unacceptable	D	V791	Screening for alcoholism
-27	9	9	_	Principal_Unacceptable	D	V792	Scrn intellect disabilty
+27	9	9	_	Principal_Unacceptable	D	V792	Screen-mental retardat
 27	9	9	_	Principal_Unacceptable	D	V793	Screen-development prob
 27	9	9	_	Principal_Unacceptable	D	V798	Screen-mental dis NEC
 27	9	9	_	Principal_Unacceptable	D	V799	Screen-mental dis NOS
