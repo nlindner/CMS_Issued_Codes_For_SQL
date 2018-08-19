@@ -1,7 +1,7 @@
 # CMS_ICD_Code_Descriptions
 
 ### Overview
-  * Contains CMS releases for ICD-9 and ICD-10 diagnosis and procedure codes, for CMS fiscal years (FYs) 2010-2018
+  * Contains CMS releases for ICD-9 and ICD-10 diagnosis and procedure codes, for CMS fiscal years (FYs) 2010-2019
   * The flat files within the ICD_9 and ICD_10 subdirectories are read in via the ICD_Diag_001_Import_Descriptions... or ICD_Proc_001_Import_Descriptions... stored procedures.
 
 ### Files Available Here
@@ -18,6 +18,8 @@
 ### File Sources: ICD-10
 | CMS FY | ICD Code Type | Source File for CMS ICD-10 Code Descriptions Is |
 | ------ | ----------- | ------------   |
+| 2019   | Diagnoses   | [2019 ICD-10 CM and GEMs](https://www.cms.gov/Medicare/Coding/ICD10/2019-ICD-10-CM.html) <br/> --> [2019 Code Descriptions in Tabular Order](https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2019-ICD-10-CM-Code-Descriptions.zip) <br/> --> icd10cm_order_2019.txt  |
+| 2019   | Procedures  | [2019 ICD-10 PCS and GEMs](https://www.cms.gov/Medicare/Coding/ICD10/2019-ICD-10-PCS.html) <br/>--> [2019 ICD-10-PCS Order File (Long and Abbreviated Titles)](https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2019-ICD-10-PCS-Order-File.zip) <br/> --> icd10pcs_order_2019.txt |
 | 2018   | Diagnoses   | [2018 ICD-10 CM and GEMs](https://www.cms.gov/Medicare/Coding/ICD10/2018-ICD-10-CM-and-GEMs.html) <br/> --> [2018 Code Descriptions in Tabular Order](https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2018-ICD-10-Code-Descriptions.zip) <br/> --> icd10cm_order_2018.txt  |
 | 2018   | Procedures  | [2018 ICD-10 PCS and GEMs](https://www.cms.gov/Medicare/Coding/ICD10/2018-ICD-10-PCS-and-GEMs.html) <br/>--> [2018 ICD-10-PCS Order File (Long and Abbreviated Titles)](https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2018-ICD-10-PCS-Order-File.zip) <br/> --> icd10pcs_order_2018.txt |
 | 2017 | Diagnoses     | [2017 ICD-10 CM and GEMs](https://www.cms.gov/Medicare/Coding/ICD10/2017-ICD-10-CM-and-GEMs.html) <br/> --> [2017 Code Descriptions in Tabular Order](https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2017-ICD10-Code-Descriptions.zip) <br/> --> icd10cm_order_2017.txt

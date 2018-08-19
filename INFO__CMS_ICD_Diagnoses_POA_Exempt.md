@@ -1,27 +1,35 @@
 # CMS_ICD_Diagnoses_POA_Exempt
 
 ### Overview
-  * Contains CMS releases of ICD diagnosis codes that are exempt from Present On Admission (POA) reporting, for CMS Fiscal Years (FYs) 2011-2018.
-  * The flat files within this directory are read in via one of the ICD_Diag_002_Import_POA_Exempt_... stored procedures.
+  * Contains CMS releases of ICD diagnosis codes that are exempt from Present On Admission (POA) reporting, for CMS Fiscal Years (FYs) 2011-2019.
+  * The flat files within this directory are read in via one of the ICD_Diag_002_Import\POA\_Exempt_... stored procedures.
 
 ### Files Available Here
- * The files for CMS FY 2015-2018 listed in the table below are available at the CMS under [Hospital-Acquired Conditions (Present on Admission Indicator)](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/HospitalAcqCond/Coding.html) 
- * Note that only fiscal years 2015-2018 are listed there and 2015 was the last CMS release for ICD-9, so I had to hunt for the other ICD-9-CM POA-exempt diagnosis codes. 
-    - FY 2013: This is hard to find on the interwebs. I finally located in on archive.org, as a [2012-10-08 snapshot](https://web.archive.org/web/20121008004658/https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/HospitalAcqCond/Coding.html) of the HAC Coding page. The POA exempt zip archive downloaded from there contained a single file, named "POA_Exempt_Diagnosis_Codes_Oct12011_FY2012(no changes for FY 2013).txt". Because I'm...precise about things like this, I compared that file and it indeed contained no changes. For that reason, I am loading the same file, POA_Exempt_Diagnosis_Codes_Oct12011_FY2012.txt for both 2012 and 2013. 
- * Differences in the ICD-9 vs ICD-10 files that are available on cms.gov
-    - The ICD-9 POA files contain ICD diagnosis codes without a period, while the ICD-10-CM files contain ICD diagnosis codes WITH a period. Because of that, the SQL Server stored procedure that loads these files adds the diagnosis code with a period, based on the CMS documentation on the format of [ICD-9-CM diagnosis codes](https://www.cms.gov/Medicare/Quality-Initiatives-Patient-Assessment-Instruments/HospitalQualityInits/Downloads/HospitalAppendix_F.pdf).
-    - The ICD-10 POA files surround the Code_Desc_Long with double-quotes as text qualifiers to escape special characters. SQL Server does not recognize  that feature of the unofficial/de facto .csv file standard, so a REPLACE() function  is used to strip those out during load.
-    - (Some?) of the ICD-9 POA files contain lowercase letters in the diagnosis codes. SQL Server is case-insensitive, but the SP uppercases those during the load process anyway.
+ * Note that except for FY 2010 and 2011, this preserves any discrepancies in the (long) code descriptions that exist between the CMS releases of ICD diagnosis codes and POA-exempt diagnosis codes; Those discrepancies tend to be wording differences, spelling differences, or spacing differences. At least some of the ICD-9 discrepancies seem to be related to spelling or spacing corrections that are not listed in [CMS' documentation of new, deleted, and revised codes](https://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/summarytables.html) but that are visible if you compare the diagnosis descriptions across years (e.g., 66070, E8304, E8305, V031, V062). These are usually minor. A few examples are:
+   - ICD 9: 66070, V1919, 75530, V1649, E8302
+   - ICD 10: O0910, T82857D, T8379XD, S02118D, S0211GD
+ * __CMS FY 2015-2019:__ Files for all ICD-10 releases and the last ICD-9 release (FY 2015) listed in the table below are available at the CMS under [Hospital-Acquired Conditions (Present on Admission Indicator)](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/HospitalAcqCond/Coding.html). 
+ * __ICD-9, CMS FY 2010-2014:__ These were difficult to locate and some are only available via archive.org. Given that the [CMS site specifies that transmittals prior to 2012 should be accessed at archive.org](https://www.cms.gov/Regulations-and-Guidance/Guidance/Transmittals/index.html), then I think that's reasonable.
+ * __Specifics for FY 2013:__ File was only available via an [archive.org snapshot](https://web.archive.org/web/20121008004658/https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/HospitalAcqCond/Coding.html). The ZIP archive available there contains a single file, "POA_Exempt_Diagnosis_Codes_Oct12011_FY2012(no changes for FY 2013).txt". That file is indeed identical to the FY2012 file, so I load the 2012 file for both 2012 and 2013.
+ * __Specifics for FY 2010 and 2011:__
+    - I generated the files in this repo from the [CMS ICD-9 diagnosis code releases](/INFO__CMS_ICD_Code_Descriptions.md) for FY 2010 and 2011, respectively, using the POA-exempt code ranges from the ICD-9-CM Official Guidelines for Coding and Reporting, effective for FY [2010](http://www.codingupdates.com/wp-content/uploads/icdguide09-Sept.pdf) or [2011](https://web.archive.org/web/20120917021503/https://www.cdc.gov/nchs/data/icd9/icdguide10.pdf), respectively. Unlike the CMS-issued files, then when possible, they provide ranges of codes that are POA-exempt, instead of listing every single exempt code. 
+
+## Standardization Applied During Load
+ * Some of the ICD-9 POA files contain lowercase letters in the diagnosis codes. SQL Server is case-insensitive, but the SP uppercases those during the load process anyway.
+ * Any trailing/leading spaces are trimmed from the diagnosis code and description during load.
+ * The ICD-9 POA files contain ICD diagnosis codes without a period, while the ICD-10-CM files contain ICD diagnosis codes WITH a period. Because of that, the SQL Server stored procedure that loads these files adds the diagnosis code with a period, based on the CMS documentation on the format of [ICD-9-CM diagnosis codes](https://www.cms.gov/Medicare/Quality-Initiatives-Patient-Assessment-Instruments/HospitalQualityInits/Downloads/HospitalAppendix_F.pdf).
+ * The ICD-10 POA files surround the Code_Desc_Long with double-quotes as text qualifiers to escape special characters. SQL Server does not recognize  that feature of the unofficial/de facto .csv file standard, so a REPLACE() function  is used to strip those out during load.
 
 ---
 ### File Sources
 | CMS FY | ICD Version | Source File for CMS POA Exempt Is |
 | ------ | ----------- | ------------   |
+| 2019 | 10 | [FY 2019 Present On Admission (POA) Exempt List](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/HospitalAcqCond/Downloads/FY-2019-Present-On-Admission-POA-Exempt-List-.zip) <br/> --> POAexemptCodes2019.txt |
 | 2018 | 10 | [FY 2018 Present On Admission (POA) Exempt List](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/HospitalAcqCond/Downloads/FY-2018-Present-On-Admission-POA-Exempt-List-.zip) <br/> --> POAexemptCodes2018.txt |
 | 2017 | 10 | [FY 2017 Present On Admission (POA) Exempt List](https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2017-POA-Exempt-List.zip) <br/> --> POAexemptCodes2017.txt |
 | 2016 | 10 | [FY 2016 Present On Admission (POA) Exempt List](https://www.cms.gov/Medicare/Coding/ICD10/Downloads/2016-POA-Exempt-List.zip) <br/> --> POAexemptCodes2016.txt |
 | 2015 | 9 | [FY 2015 ICD-9-CM Present On Admission (POA) Exempt List](https://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/Downloads/FY2015-ICD9-POA-Exempt-List.zip) <br/> --> ICD-9_POA_Exempt_Diagnosis_Codes_Oct12014_FY2015.txt |
 | 2014 | 9 | Release not listed on CMS, but available via [direct download](https://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/Downloads/FY2014-ICD9-POA-Exempt-List.zip) <br/> --> ICD-POA_Exempt_Diagnosis_Codes_Oct12013_FY2014.txt |
-| 2012 - 2013 | 9 | Release not listed on CMS, but available via [direct download](http://www.cms.gov/HospitalAcqCond/Downloads/POA_Exempt_Diagnosis_Codes.zip) <br/> --> POA_Exempt_Diagnosis_Codes_Oct12011_FY2012.txt |
-| 2011 | 9 | Manually created list from "Attachment" section in [CMS Transmittal R756OTN](https://www.cms.gov/Regulations-and-Guidance/Guidance/Transmittals/Downloads/R756OTN.pdf) (Under Categories and Codes Exempt from Diagnosis Present on Admission Requirement). <br/> Validated differences between it and the FY 2012 file against the POA code changes specified in [CMS Transmittal R1019OTN](https://www.cms.gov/Regulations-and-Guidance/Guidance/Transmittals/downloads/r1019otn.pdf), as "Update to the Fiscal Year (FY) 2012 List of Codes Exempt from Reporting Present on Admission" |
+| 2012-2013 | 9 | 2012 release not listed on CMS, but available via [direct download](http://www.cms.gov/HospitalAcqCond/Downloads/POA_Exempt_Diagnosis_Codes.zip) <br/> --> POA_Exempt_Diagnosis_Codes_Oct12011_FY2012.txt <br/> See "Files Available Here" for why we load the same file for both years |
+| 2010-2011 | 9 | See "Files Available Here" for how the files in this repo were generated from the ICD-9-CM official guidelines for [FY 2010](http://www.codingupdates.com/wp-content/uploads/icdguide09-Sept.pdf) and [FY 2011](https://web.archive.org/web/20120917021503/https://www.cdc.gov/nchs/data/icd9/icdguide10.pdf) |
 

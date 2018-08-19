@@ -849,7 +849,7 @@ E8298	Other road vehicle accidents injuring other specified person
 E8299	Other road vehicle accidents injuring unspecified person 
 E8300	Accident to watercraft causing submersion injuring occupant of small boat, unpowered 
 E8301	Accident to watercraft causing submersion injuring occupant of small boat, powered 
-E8302	Accident to watercraft causing submersion injuring occupant of other watercraft – crew 
+E8302	Accident to watercraft causing submersion injuring occupant of other watercraft -- crew 
 E8303	Accident to watercraft causing submersion injuring occupant of other watercraft -- other than crew 
 E8304	Accident to watercraft causing submersion njuring water skier 
 E8305	Accident to watercraft causing submersion njuring swimmer 
@@ -879,7 +879,7 @@ E8328	Other accidental submersion or drowning in water transport accident injuri
 E8329	Other accidental submersion or drowning in water transport accident injuring unspecified person 
 E8330	Fall on stairs or ladders in water transport injuring occupant of small boat, unpowered 
 E8331	Fall on stairs or ladders in water transport injuring occupant of small boat, powered 
-E8332	Fall on stairs or ladders in water transport injuring occupant of other watercraft – crew 
+E8332	Fall on stairs or ladders in water transport injuring occupant of other watercraft -- crew 
 E8333	Fall on stairs or ladders in water transport injuring occupant of other watercraft -- other than crew 
 E8334	Fall on stairs or ladders in water transport injuring water skier 
 E8335	Fall on stairs or ladders in water transport injuring swimmer 
@@ -899,7 +899,7 @@ E8348	Other fall from one level to another in water transport injuring other spe
 E8349	Other fall from one level to another in water transport injuring unspecified person 
 E8350	Other and unspecified fall in water transport injuring occupant of small boat, unpowered 
 E8351	Other and unspecified fall in water transport injuring occupant of small boat, powered 
-E8352	Other and unspecified fall in water transport injuring occupant of other watercraft – crew 
+E8352	Other and unspecified fall in water transport injuring occupant of other watercraft -- crew 
 E8353	Other and unspecified fall in water transport injuring occupant of other watercraft -- other than crew 
 E8354	Other and unspecified fall in water transport injuring water skier 
 E8355	Other and unspecified fall in water transport injuring swimmer 
@@ -919,7 +919,7 @@ E8368	Machinery accident in water transport injuring other specified person
 E8369	Machinery accident in water transport injuring unspecified person 
 E8370	Explosion, fire, or burning in watercraft injuring occupant of small boat, unpowered 
 E8371	Explosion, fire, or burning in watercraft injuring occupant of small boat, powered 
-E8372	Explosion, fire, or burning in watercraft injuring occupant of other watercraft – crew 
+E8372	Explosion, fire, or burning in watercraft injuring occupant of other watercraft -- crew 
 E8373	Explosion, fire, or burning in watercraft injuring occupant of other watercraft -- other than crew 
 E8374	Explosion, fire, or burning in watercraft injuring water skier 
 E8375	Explosion, fire, or burning in watercraft injuring swimmer 
@@ -954,7 +954,7 @@ E8413	Accident to powered aircraft, other and unspecified, injuring other occupa
 E8414	Accident to powered aircraft, other and unspecified, injuring occupant of commercial aircraft (powered) in surface to air transport 
 E8415	Accident to powered aircraft, other and unspecified, injuring occupant of other powered aircraft 
 E8416	Accident to powered aircraft, other and unspecified, injuring occupant of unpowered aircraft, except parachutist 
-E8417	Accident to powered aircraft, other and unspecified, injuring parachutist (military)  (other) 
+E8417	Accident to powered aircraft, other and unspecified, injuring parachutist (military) (other) 
 E8418	Accident to powered aircraft, other and unspecified, injuring ground crew, airline employee 
 E8419	Accident to powered aircraft, other and unspecified, injuring other person 
 E8426	Accident to unpowered aircraft injuring occupant of unpowered aircraft, except parachutist 
@@ -1017,8 +1017,6 @@ E8932	Accident caused by ignition of clothing from controlled fire not in buildi
 E894	Ignition of highly inflammable material 
 E895	Accident caused by controlled fire in private dwelling 
 E897	Accident caused by controlled fire not in building or structure 
-E8980	Accident caused by burning bedclothes 
-E8981	Accident caused by other burning materials 
 E9170	Striking against or struck accidentally by objects or persons in sports 
 E9171	Striking against or struck accidentally by a crowd, by collective fear or panic 
 E9172	Striking against or struck accidentally in running water 
@@ -1055,7 +1053,6 @@ E9285	External constriction caused by other object
 E9286	Environmental exposure to harmful algae and toxins 
 E9287	Environmental and accidental causes, mechanism or component of firearm and air gun 
 E9288	Other accidents 
-E9289	Unspecified accident 
 E9290	Late effects of motor vehicle accident 
 E9291	Late effects of other transport accident 
 E9292	Late effects of accidental poisoning 
@@ -1385,6 +1382,7 @@ V1586	Personal history of contact with and (suspected) exposure to lead
 V1587	History of extracorporeal membrane oxygenation (ECMO) 
 V1588	History of fall 
 V1589	Other specified personal history presenting hazards to health 
+V159	Unspecified personal history presenting hazards to health 
 V160	Family history of malignant neoplasm of gastrointestinal tract 
 V161	Family history of malignant neoplasm of trachea, bronchus, and lung 
 V162	Family history of malignant neoplasm of other respiratory and intrathoracic organs 
@@ -2163,7 +2161,7 @@ V9102	Twin gestation, monochorionic/diamniotic (one placenta, two amniotic sacs)
 V9103	Twin gestation, dichorionic/diamniotic (two placentae, two amniotic sacs) 
 V9109	Twin gestation, unable to determine number of placenta and number of amniotic sacs 
 V9110	Triplet gestation, unspecified number of placenta and unspecified number of amniotic sacs 
-V9111	Triplet gestation, with two or more monochorionic fetuses
+V9111	Triplet gestation, with two or more monochorionic fetuses 
 V9112	Triplet gestation, with two or more monoamniotic fetuses 
 V9119	Triplet gestation, unable to determine number of placenta and number of amniotic sacs 
 V9120	Quadruplet gestation, unspecified number of placenta and unspecified number of amniotic sacs 
@@ -2173,4 +2171,4 @@ V9129	Quadruplet gestation, unable to determine number of placenta and number of
 V9190	Other specified multiple gestation, unspecified number of placenta and unspecified number of amniotic sacs 
 V9191	Other specified multiple gestation, with two or more monochorionic fetuses 
 V9192	Other specified multiple gestation, with two or more monoamniotic fetuses 
-V9199	Other specified multiple gestation, unable to determine number of placenta and number of amniotic sacs
+V9199	Other specified multiple gestation, unable to determine number of placenta and number of amniotic sacs 
