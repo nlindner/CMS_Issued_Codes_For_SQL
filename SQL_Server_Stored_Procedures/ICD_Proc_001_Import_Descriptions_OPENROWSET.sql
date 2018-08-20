@@ -88,6 +88,8 @@ BEGIN
 			'C:\Users\Nicole\Documents\GitHub\CMS_MS_DRG_Grouper_Help\CMS_ICD_Code_Descriptions'
 
 	CHANGE LOG
+		2018.08.19 NLM
+			*	Added FY 2019 to file load
 		2018.03.11 NLM
 			*	Edited documentation to accommodate the new directory INFO__ file
 			*	Added @FieldNm_... parameters to allow customizing the field names
@@ -217,6 +219,7 @@ BEGIN
 			 (10, 2016, '2015-10-01', '2016-09-30', 'icd10pcs_order_2016.txt')
 			,(10, 2017, '2016-10-01', '2017-09-30', 'icd10pcs_order_2017.txt')
 			,(10, 2018, '2017-10-01', '2018-09-30', 'icd10pcs_order_2018.txt')
+			,(10, 2019, '2018-10-01', '2019-09-30', 'icd10pcs_order_2019.txt')
 	END
 
 	IF @Which_ICD_Version_To_Load IN ('ALL', '09', '9')

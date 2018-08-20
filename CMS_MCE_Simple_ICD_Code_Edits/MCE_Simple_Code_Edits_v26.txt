@@ -4868,9 +4868,9 @@ MCE_Version	ICD_Version	MCE_Section	MCE_Subsection	MCE_Edit_Type	ICD_Code_Type	I
 26	9	17	A	Limited_Coverage	P	3766	Implantable hrt assist
 26	9	17	A	Limited_Coverage	P	4697	Transplant of intestine
 26	9	17	A	Limited_Coverage	P	5059	Liver transplant NEC
-26	9	17	A	Limited_Coverage	P	5280	Pancreat transplant NOS
+26	9	17	A	Limited_Coverage	P	5280	Pancreas transplant NOS
 26	9	17	A	Limited_Coverage	P	5282	Pancreatic homotransplan
-26	9	17	A	Limited_Coverage	P	5569	Kidney transplant NEC
+26	9	17	A	Limited_Coverage	P	5569	Kidney tansplant NEC
 26	9	18	_	Wrong_Performed	D	E8765	Perfrm wrong op/right pt
 26	9	18	_	Wrong_Performed	D	E8766	Proc-pt not sched surg
 26	9	18	_	Wrong_Performed	D	E8767	Rt proc-wrong side/part

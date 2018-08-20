@@ -30,8 +30,9 @@ BEGIN
 		*	See repo LICENSE and README for general information
 		*	See INFO__CMS_ICD_Diagnoses_POA_Exempt for details and sources for files 
 			loaded  here, an explanation of why FY 2012 is loaded for both 2012 and 2013,
-			and the manual process required to create the FY 2011 file from the PDF 
-			available at cms.gov
+			and the manual process required to create the FY 2010 and 2011 files from 
+			the code ranges listed as POA-exempt in Appendix I of the ICD-9-CM 
+			Official Guidelines for Coding and Reporting in effect for each FY.
 		*	Loads table with ICD-9 and ICD-10 diagnosis codes exempt from Present on 
 			Admission (POA) reporting for CMS Fiscal Years (FY) 2011-2018
 		*	This is the simple (OPENROWSET) method to import this info.
@@ -81,6 +82,10 @@ BEGIN
 			'C:\Users\Nicole\Documents\GitHub\CMS_MS_DRG_Grouper_Help\CMS_ICD_Diagnoses_POA_Exempt'
 
 	CHANGE LOG
+		2018.08.19 NLM
+			*	Changes to which files are loaded here (i.e., changes to #CMS_FY_Release_Map):
+				*	Adding FYs 2010, 2019 and re-deploying FY 2011 file. 
+				FY 2010 and 2011 built from the coding guidelines in effect for the respective FY.
 		2018.03.11 NLM
 			*	Edited documentation to accommodate the new directory INFO__ file
 		2018.02.18 NLM
@@ -216,6 +221,7 @@ BEGIN
 			 (10, 2016, '2015-10-01', '2016-09-30', 'POAexemptcodes2016.txt')
 			,(10, 2017, '2016-10-01', '2017-09-30', 'POAexemptcodes2017.txt')
 			,(10, 2018, '2017-10-01', '2018-09-30', 'POAexemptcodes2018.txt')
+			,(10, 2019, '2018-10-01', '2019-09-30', 'POAexemptcodes2019.txt')
 	END
 
 	IF @Which_ICD_Version_To_Load IN ('ALL', '09', '9')
@@ -228,7 +234,8 @@ BEGIN
 			,CMS_File_Name
 		)
 		VALUES
-			 (9, 2011, '2010-10-01', '2011-09-30', 'POA_Exempt_Per_CMS_Transmittal_R756OTN_Oct12010_FY2011.txt')
+			 (9, 2010, '2009-10-01', '2010-09-30', 'POA_Exempt_Diagnosis_Codes_Generated_FY2010.txt')
+			,(9, 2011, '2010-10-01', '2011-09-30', 'POA_Exempt_Diagnosis_Codes_Generated_FY2011.txt')
 			,(9, 2012, '2011-10-01', '2012-09-30', 'POA_Exempt_Diagnosis_Codes_Oct12011_FY2012.txt')
 			,(9, 2013, '2012-10-01', '2013-09-30', 'POA_Exempt_Diagnosis_Codes_Oct12011_FY2012.txt')
 			,(9, 2014, '2013-10-01', '2014-09-30', 'POA_Exempt_Diagnosis_Codes_Oct12013_FY2014.txt')
