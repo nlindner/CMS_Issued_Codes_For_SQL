@@ -31,7 +31,7 @@ BEGIN
 			on which portions of the MCE documentation are available here, and how the
 			fields loaded here map back to what is available in the MCE documentation		
 		*	Loads table with the single-code ICD code edits from the CMS releases for 
-			the Medicare Code Editor (MCE) for Fiscal Years (FY) 2010-2018
+			the Medicare Code Editor (MCE) for Fiscal Years (FY) 2010-2019
 		*	The imported data can then be used to add MCE edit information to 
 			existing ICD Diagnosis and Procedure code lookup/reference/dimension tables 
 			*	See INFO__CMS_ICD_Code_Descriptions and the ICD_Diag/ICD_Proc
@@ -234,8 +234,8 @@ BEGIN
 		VALUES
 			 ('33', 10, 2016, '2015-10-01', '2016-09-30')
 			,('34', 10, 2017, '2016-10-01', '2017-09-30')
-			,('35', 10, 2018, '2017-10-01', '2018-09-30')			
-			,('36', 10, 2019, '2018-10-01', '2019-09-30')			
+			,('35', 10, 2018, '2017-10-01', '2018-09-30')
+			,('36', 10, 2019, '2018-10-01', '2019-09-30')
 	END
 
 	IF @Which_ICD_Version_To_Load IN ('ALL', '09', '9')

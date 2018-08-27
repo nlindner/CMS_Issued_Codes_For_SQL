@@ -37,19 +37,11 @@ BEGIN
 			here and details on what was done to generate the ICD-9 flat files
 			from the Excel files that are available on cms.gov
 		*	Loads table with ICD-9 and ICD-10 diagnosis code descriptions from CMS 
-			releases for Fiscal Years (FY) 2010-2018, available for download from cms.gov,
+			releases for Fiscal Years (FY) 2010-2019, available for download from cms.gov,
 			to serve as a simple lookup/reference/dimension table. 
 		*	This is the simple (OPENROWSET) method to import this info.
 			dbo.ICD_Diag_001_Import_Descriptions_AsValues does exactly the same thing,
 			but does not require OPENROWSET permissions (i.e., ADMINISTER BULK OPERATIONS)
-		*	ENCODING NOTE: This repo is set so that Windows will import the handful of 
-			descriptions that have accented characters. I tried LF ending and UTF-8
-			(with or without BOM), but Git and SQL Server (including 2012, which doesn't
-			recognize UTF-8 CodePage of 65001) weren't playing nicely together.
-			I think I've fixed this via .gitattributes (CRLF line endings and Latin 1252
-			encoding).
-			*	To check whether this is an issue, check these diagnosis codes' descriptions
-				Diagnosis_Code IN ('0413', '04671', '38600', '38601', '38602', '38603', '38604')
 
 	PARAMETERS
 		@Schema_Name (Required, if other than default of 'dbo')
@@ -89,7 +81,7 @@ BEGIN
 
 	EXAMPLE CALL
 	exec dbo.ICD_Diag_001_Import_Descriptions_OPENROWSET 
-		@Table_Name = 'DIM_ICD_Diagnosis_All'
+		@Table_Name = 'DIM_ICD_Diagnosis'
 		,@Table_Action = 'DROP_CREATE'
 		,@Which_ICD_Version_To_Load = 'ALL'
 		,@Source_File_Dir = 
@@ -101,6 +93,14 @@ BEGIN
 		2018.05.13 NLM
 			*	Think I resolved the encoding issues via GitAttributes, so removed
 				the @Which_CodePage input parameter
+			*	ENCODING NOTE: This repo is set so that Windows will import the handful of 
+				descriptions that have accented characters. I tried LF ending and UTF-8
+				(with or without BOM), but Git and SQL Server (including 2012, which doesn't
+				recognize UTF-8 CodePage of 65001) weren't playing nicely together.
+				I think I've fixed this via .gitattributes (CRLF line endings and Latin 1252
+				encoding).
+				*	To check whether this is an issue, check these diagnosis codes' descriptions
+					Diagnosis_Code IN ('0413', '04671', '38600', '38601', '38602', '38603', '38604')
 		2018.03.11 NLM
 			*	Edited documentation to accommodate the new directory INFO__ file
 			*	Added @FieldNm_... parameters to allow customizing the field names
