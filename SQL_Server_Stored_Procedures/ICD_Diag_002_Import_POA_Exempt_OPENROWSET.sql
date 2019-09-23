@@ -82,6 +82,8 @@ BEGIN
 			'C:\Users\Nicole\Documents\GitHub\CMS_MS_DRG_Grouper_Help\CMS_ICD_Diagnoses_POA_Exempt'
 
 	CHANGE LOG
+		2019.09.22 NLM
+			*	Added FY 2020 to file load
 		2018.08.19 NLM
 			*	Changes to which files are loaded here (i.e., changes to #CMS_FY_Release_Map):
 				*	Adding FYs 2010, 2019 and re-deploying FY 2011 file. 
@@ -222,6 +224,7 @@ BEGIN
 			,(10, 2017, '2016-10-01', '2017-09-30', 'POAexemptcodes2017.txt')
 			,(10, 2018, '2017-10-01', '2018-09-30', 'POAexemptcodes2018.txt')
 			,(10, 2019, '2018-10-01', '2019-09-30', 'POAexemptcodes2019.txt')
+			,(10, 2020, '2019-10-01', '2020-09-30', 'POAexemptcodes2020.txt')
 	END
 
 	IF @Which_ICD_Version_To_Load IN ('ALL', '09', '9')

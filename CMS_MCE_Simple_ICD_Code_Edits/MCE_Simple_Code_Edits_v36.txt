@@ -11558,33 +11558,33 @@ MCE_Version	ICD_Version	MCE_Section	MCE_Subsection	MCE_Edit_Type	ICD_Code_Type	I
 36	10	6	_	Principal_Manifestation	D	R4782	Fluency disorder in conditions classified elsewhere
 36	10	6	_	Principal_Manifestation	D	R5081	Fever presenting with conditions classified elsewhere
 36	10	6	_	Principal_Manifestation	D	Z9183	Wandering in diseases classified elsewhere
-36	10	8	_	Principal_Questionable_Admit	D	E119	Type 2 diabetes mellitus without complications
-36	10	8	_	Principal_Questionable_Admit	D	E139	Other specified diabetes mellitus without complications
-36	10	8	_	Principal_Questionable_Admit	D	E6609	Other obesity due to excess calories
-36	10	8	_	Principal_Questionable_Admit	D	E661	Drug-induced obesity
-36	10	8	_	Principal_Questionable_Admit	D	E668	Other obesity
-36	10	8	_	Principal_Questionable_Admit	D	E669	Obesity, unspecified
-36	10	8	_	Principal_Questionable_Admit	D	H6120	Impacted cerumen, unspecified ear
-36	10	8	_	Principal_Questionable_Admit	D	H6121	Impacted cerumen, right ear
-36	10	8	_	Principal_Questionable_Admit	D	H6122	Impacted cerumen, left ear
-36	10	8	_	Principal_Questionable_Admit	D	H6123	Impacted cerumen, bilateral
-36	10	8	_	Principal_Questionable_Admit	D	I10	Essential (primary) hypertension
-36	10	8	_	Principal_Questionable_Admit	D	I444	Left anterior fascicular block
-36	10	8	_	Principal_Questionable_Admit	D	I445	Left posterior fascicular block
-36	10	8	_	Principal_Questionable_Admit	D	I4460	Unspecified fascicular block
-36	10	8	_	Principal_Questionable_Admit	D	I4469	Other fascicular block
-36	10	8	_	Principal_Questionable_Admit	D	I447	Left bundle-branch block, unspecified
-36	10	8	_	Principal_Questionable_Admit	D	I450	Right fascicular block
-36	10	8	_	Principal_Questionable_Admit	D	I4510	Unspecified right bundle-branch block
-36	10	8	_	Principal_Questionable_Admit	D	I4519	Other right bundle-branch block
-36	10	8	_	Principal_Questionable_Admit	D	R030	Elevated blood-pressure reading, w/o diagnosis of htn
-36	10	8	_	Principal_Questionable_Admit	D	R9720	Elevated prostate specific antigen [PSA]
-36	10	8	_	Principal_Questionable_Admit	D	R9721	Rising PSA fol treatment for malignant neoplasm of prostate
-36	10	8	_	Principal_Questionable_Admit	D	Z21	Asymptomatic human immunodeficiency virus infection status
-36	10	8	_	Principal_Questionable_Admit	D	Z45010	Encntr for checking and test of card pacemaker pulse gnrtr
-36	10	8	_	Principal_Questionable_Admit	D	Z45018	Encounter for adjust and mgmt oth prt cardiac pacemaker
-36	10	8	_	Principal_Questionable_Admit	D	Z4502	Encntr for adjust and mgmt of automatic implntbl card defib
-36	10	8	_	Principal_Questionable_Admit	D	Z4509	Encounter for adjustment and management of cardiac device
+36	10	8	A	Principal_Questionable_Admit	D	E119	Type 2 diabetes mellitus without complications
+36	10	8	A	Principal_Questionable_Admit	D	E139	Other specified diabetes mellitus without complications
+36	10	8	A	Principal_Questionable_Admit	D	E6609	Other obesity due to excess calories
+36	10	8	A	Principal_Questionable_Admit	D	E661	Drug-induced obesity
+36	10	8	A	Principal_Questionable_Admit	D	E668	Other obesity
+36	10	8	A	Principal_Questionable_Admit	D	E669	Obesity, unspecified
+36	10	8	A	Principal_Questionable_Admit	D	H6120	Impacted cerumen, unspecified ear
+36	10	8	A	Principal_Questionable_Admit	D	H6121	Impacted cerumen, right ear
+36	10	8	A	Principal_Questionable_Admit	D	H6122	Impacted cerumen, left ear
+36	10	8	A	Principal_Questionable_Admit	D	H6123	Impacted cerumen, bilateral
+36	10	8	A	Principal_Questionable_Admit	D	I10	Essential (primary) hypertension
+36	10	8	A	Principal_Questionable_Admit	D	I444	Left anterior fascicular block
+36	10	8	A	Principal_Questionable_Admit	D	I445	Left posterior fascicular block
+36	10	8	A	Principal_Questionable_Admit	D	I4460	Unspecified fascicular block
+36	10	8	A	Principal_Questionable_Admit	D	I4469	Other fascicular block
+36	10	8	A	Principal_Questionable_Admit	D	I447	Left bundle-branch block, unspecified
+36	10	8	A	Principal_Questionable_Admit	D	I450	Right fascicular block
+36	10	8	A	Principal_Questionable_Admit	D	I4510	Unspecified right bundle-branch block
+36	10	8	A	Principal_Questionable_Admit	D	I4519	Other right bundle-branch block
+36	10	8	A	Principal_Questionable_Admit	D	R030	Elevated blood-pressure reading, w/o diagnosis of htn
+36	10	8	A	Principal_Questionable_Admit	D	R9720	Elevated prostate specific antigen [PSA]
+36	10	8	A	Principal_Questionable_Admit	D	R9721	Rising PSA fol treatment for malignant neoplasm of prostate
+36	10	8	A	Principal_Questionable_Admit	D	Z21	Asymptomatic human immunodeficiency virus infection status
+36	10	8	A	Principal_Questionable_Admit	D	Z45010	Encntr for checking and test of card pacemaker pulse gnrtr
+36	10	8	A	Principal_Questionable_Admit	D	Z45018	Encounter for adjust and mgmt oth prt cardiac pacemaker
+36	10	8	A	Principal_Questionable_Admit	D	Z4502	Encntr for adjust and mgmt of automatic implntbl card defib
+36	10	8	A	Principal_Questionable_Admit	D	Z4509	Encounter for adjustment and management of cardiac device
 36	10	9	_	Principal_Unacceptable	D	B6013	Keratoconjunctivitis due to Acanthamoeba
 36	10	9	_	Principal_Unacceptable	D	B950	Streptococcus, group A, causing diseases classd elswhr
 36	10	9	_	Principal_Unacceptable	D	B951	Streptococcus, group B, causing diseases classd elswhr

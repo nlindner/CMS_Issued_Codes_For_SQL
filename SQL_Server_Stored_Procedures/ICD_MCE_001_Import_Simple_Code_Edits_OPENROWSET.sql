@@ -79,6 +79,8 @@ BEGIN
 			'C:\Users\Nicole\Documents\GitHub\CMS_MS_DRG_Grouper_Help\CMS_MCE_Simple_ICD_Code_Edits'
 
 	CHANGE LOG
+		2019.09.22 NLM
+			*	Added FY 2020 to file load
 		2018.08.19 NLM
 			*	Added FY 2019 to file load
 		2018.03.11 NLM
@@ -236,6 +238,7 @@ BEGIN
 			,('34', 10, 2017, '2016-10-01', '2017-09-30')
 			,('35', 10, 2018, '2017-10-01', '2018-09-30')
 			,('36', 10, 2019, '2018-10-01', '2019-09-30')
+			,('37', 10, 2020, '2019-10-01', '2020-09-30')
 	END
 
 	IF @Which_ICD_Version_To_Load IN ('ALL', '09', '9')
