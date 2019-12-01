@@ -439,7 +439,7 @@ MCE_Version	ICD_Version	MCE_Section	MCE_Subsection	MCE_Edit_Type	ICD_Code_Type	I
 33	10	4	A	Newborn_Only	D	Z3868	Other multiple liveborn infant, delivered vaginally
 33	10	4	A	Newborn_Only	D	Z3869	Other multiple liveborn infant, delivered by cesarean
 33	10	4	A	Newborn_Only	D	Z387	Other multiple liveborn infant, born outside hospital
-33	10	4	A	Newborn_Only	D	Z388	Other multiple liveborn infant, unsp as to place of birth 
+33	10	4	A	Newborn_Only	D	Z388	Other multiple liveborn infant, unsp as to place of birth
 33	10	4	B	Pediatric_Only	D	A4851	Infant botulism
 33	10	4	B	Pediatric_Only	D	B0820	Exanthema subitum [sixth disease], unspecified
 33	10	4	B	Pediatric_Only	D	B0821	Exanthema subitum [sixth disease] due to human herpesvirus 6

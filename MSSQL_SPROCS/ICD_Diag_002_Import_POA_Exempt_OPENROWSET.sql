@@ -79,7 +79,7 @@ BEGIN
 		,@Table_Action = 'DROP_CREATE'
 		,@Which_ICD_Version_To_Load = 'ALL'
 		,@Source_File_Dir = 
-			'C:\Users\Nicole\Documents\GitHub\CMS_MS_DRG_Grouper_Help\CMS_ICD_Diagnoses_POA_Exempt'
+			'C:\Users\Nicole\Documents\GitHub\CMS_MS_DRG_Grouper_Help\ICD_Diag_POA_Exempt'
 
 	CHANGE LOG
 		2019.09.22 NLM
@@ -310,7 +310,7 @@ BEGIN
 			FROM OPENROWSET(
 				BULK ''' + @Source_File_Dir + '\' + @This_CMS_File_Name
 				+ '''
-				,FORMATFILE = ''' + @Source_File_Dir + '\ICD9_POAexemptcodes_format.fmt'
+				,FORMATFILE = ''' + @Source_File_Dir + '\..\MSSQL_format\diag_poa_exempt_icd9.fmt'
 				+ '''
 				,ERRORFILE = ''' + @Source_File_Dir + '\Errorfile_POA_Exempt_CMS_FY' + @This_CMS_FY + '.err'''
 				+ '
@@ -344,7 +344,7 @@ BEGIN
 			FROM OPENROWSET(
 				BULK ''' + @Source_File_Dir + '\' + @This_CMS_File_Name
 				+ '''
-				,FORMATFILE = ''' + @Source_File_Dir + '\POAexemptcodes_format.fmt'
+				,FORMATFILE = ''' + @Source_File_Dir + '\..\MSSQL_format\diag_poa_exempt_icd10.fmt'
 				+ '''
 				,ERRORFILE = ''' + @Source_File_Dir + '\Errorfile_POA_Exempt_CMS_FY' + @This_CMS_FY + '.err'''
 				+ '

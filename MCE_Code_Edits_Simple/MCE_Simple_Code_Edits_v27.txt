@@ -317,10 +317,10 @@ MCE_Version	ICD_Version	MCE_Section	MCE_Subsection	MCE_Edit_Type	ICD_Code_Type	I
 27	9	4	B	Pediatric_Only	D	V201	Care of healthy chld NEC
 27	9	4	B	Pediatric_Only	D	V202	Routin child health exam
 27	9	4	B	Pediatric_Only	D	V695	Behav insomnia-childhood
-27	9	4	B	Pediatric_Only	D	V8551	BMI,pediatric <5% 
-27	9	4	B	Pediatric_Only	D	V8552	BMI,pediatric 5% - <85% 
-27	9	4	B	Pediatric_Only	D	V8553	BMI,pediatric 85% - <95% 
-27	9	4	B	Pediatric_Only	D	V8554	BMI,pediatric >= 95% 
+27	9	4	B	Pediatric_Only	D	V8551	BMI,pediatric <5%
+27	9	4	B	Pediatric_Only	D	V8552	BMI,pediatric 5% - <85%
+27	9	4	B	Pediatric_Only	D	V8553	BMI,pediatric 85% - <95%
+27	9	4	B	Pediatric_Only	D	V8554	BMI,pediatric >= 95%
 27	9	4	C	Maternity_Only	D	630	Hydatidiform mole
 27	9	4	C	Maternity_Only	D	631	Oth abn prod conception
 27	9	4	C	Maternity_Only	D	632	Missed abortion
@@ -4877,10 +4877,10 @@ MCE_Version	ICD_Version	MCE_Section	MCE_Subsection	MCE_Edit_Type	ICD_Code_Type	I
 27	9	9	_	Principal_Unacceptable	D	V8543	BMI 50.0-59.9, adult
 27	9	9	_	Principal_Unacceptable	D	V8544	BMI 60.0-69.9, adult
 27	9	9	_	Principal_Unacceptable	D	V8545	BMI 70 and over, adult
-27	9	9	_	Principal_Unacceptable	D	V8551	BMI,pediatric <5% 
-27	9	9	_	Principal_Unacceptable	D	V8552	BMI,pediatric 5% - <85% 
-27	9	9	_	Principal_Unacceptable	D	V8553	BMI,pediatric 85% - <95% 
-27	9	9	_	Principal_Unacceptable	D	V8554	BMI,pediatric >= 95% 
+27	9	9	_	Principal_Unacceptable	D	V8551	BMI,pediatric <5%
+27	9	9	_	Principal_Unacceptable	D	V8552	BMI,pediatric 5% - <85%
+27	9	9	_	Principal_Unacceptable	D	V8553	BMI,pediatric 85% - <95%
+27	9	9	_	Principal_Unacceptable	D	V8554	BMI,pediatric >= 95%
 27	9	9	_	Principal_Unacceptable	D	V860	Estrogen recep pstv stat
 27	9	9	_	Principal_Unacceptable	D	V861	Estrogen recep neg stat
 27	9	9	_	Principal_Unacceptable	D	V8701	Contact/exposure arsenic

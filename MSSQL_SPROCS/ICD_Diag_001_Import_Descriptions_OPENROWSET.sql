@@ -5,13 +5,13 @@ GO
 
 -- If procedure does not already exist, create a stub that will then be replaced by ALTER. The BEGIN CATCH eliminate any error messages if it does already exist
 BEGIN TRY
-	 EXEC ('CREATE PROCEDURE dbo.ICD_Proc_001_Import_Descriptions_OPENROWSET AS DECLARE @A varchar(100); SET @A=ISNULL(OBJECT_NAME(@@PROCID), ''unknown'')+'' was not created!''; RAISERROR(@A,16,1);return 9999')
+	 EXEC ('CREATE PROCEDURE dbo.ICD_Diag_001_Import_Descriptions_OPENROWSET AS DECLARE @A varchar(100); SET @A=ISNULL(OBJECT_NAME(@@PROCID), ''unknown'')+'' was not created!''; RAISERROR(@A,16,1);return 9999')
 END TRY BEGIN CATCH END CATCH
 GO
 
-ALTER PROCEDURE dbo.ICD_Proc_001_Import_Descriptions_OPENROWSET (
+ALTER PROCEDURE dbo.ICD_Diag_001_Import_Descriptions_OPENROWSET (
 	 @Schema_Name                   VARCHAR(32)    = 'dbo'
-	,@Table_Name                    VARCHAR(100)   = 'DIM_ICD_Procedure'
+	,@Table_Name                    VARCHAR(100)   = 'DIM_ICD_Diagnosis'
 	,@Table_Action                  VARCHAR(16)    = 'DROP_CREATE'
 	,@Which_ICD_Version_To_Load     VARCHAR(3)     = 'ALL'
 	,@Source_File_Dir               VARCHAR(1000)  = NULL
@@ -19,7 +19,7 @@ ALTER PROCEDURE dbo.ICD_Proc_001_Import_Descriptions_OPENROWSET (
 	,@FieldNm_Effective_Date        VARCHAR(100)   = 'Effective_Date'
 	,@FieldNm_End_Date              VARCHAR(100)   = 'End_Date'
 	,@FieldNm_ICD_Version           VARCHAR(100)   = 'ICD_Version'
-	,@FieldNm_ICD_Code              VARCHAR(100)   = 'Procedure_Code'
+	,@FieldNm_ICD_Code              VARCHAR(100)   = 'Diagnosis_Code'
 	,@FieldNm_Code_Desc_Short       VARCHAR(100)   = 'Code_Desc_Short'
 	,@FieldNm_Code_Desc_Long        VARCHAR(100)   = 'Code_Desc_Long'
 ) AS
@@ -29,25 +29,25 @@ BEGIN
 		Nicole M. Lindner-Miles
 
 	STORED PROCEDURE
-		ICD_Proc_001_Import_Descriptions_OPENROWSET
+		ICD_Diag_001_Import_Descriptions_OPENROWSET
 
 	DESCRIPTION
 		*	See repo LICENSE and README for general information
 		*	See INFO__CMS_ICD_Code_Descriptions for details and sources for files loaded 
 			here and details on what was done to generate the ICD-9 flat files
 			from the Excel files that are available on cms.gov
-		*	Loads table with ICD-9 and ICD-10 procedure code descriptions from CMS 
-			releases for Fiscal Years (FY) 2010-2018, available for download from cms.gov,
+		*	Loads table with ICD-9 and ICD-10 diagnosis code descriptions from CMS 
+			releases for Fiscal Years (FY) 2010-2019, available for download from cms.gov,
 			to serve as a simple lookup/reference/dimension table. 
 		*	This is the simple (OPENROWSET) method to import this info.
-			dbo.ICD_Proc_001_Import_Descriptions_AsValues does exactly the same thing,
+			dbo.ICD_Diag_001_Import_Descriptions_AsValues does exactly the same thing,
 			but does not require OPENROWSET permissions (i.e., ADMINISTER BULK OPERATIONS)
 
 	PARAMETERS
 		@Schema_Name (Required, if other than default of 'dbo')
-		@Table_Name (Required, if other than default of 'DIM_ICD_Procedure')
+		@Table_Name (Required, if other than default of 'DIM_ICD_Diagnosis')
 			This procedure creates permanent output table @Schema_Name.Table_Name
-			and loads it with all ICD procedure code descriptions available in this repo
+			and loads it with all ICD diagnosis code descriptions available in this repo
 		@Table_Action (Required, if other than default of 'DROP_CREATE')
 			Valid Values: 'DROP_CREATE', 'TRUNCATE', 'DELETE_ICD9', 'DELETE_ICD10'
 			Specifies what to do with the permanent output table.
@@ -73,35 +73,67 @@ BEGIN
 		*	Dependent on which @Table_Action is invoked, prepare the permanent output 
 			table (@Schema_Name.@Table_Name), via either DROP_CREATE, TRUNCATE, 
 			DELETE_ICD9, or DELETE_ICD10
-		*	Load all ICD procedure codes and their descriptions:
+		*	Load all ICD diagnosis codes and their descriptions:
 			*	Create temporary table #CMS_FY_Release_Map and populate it with all CMS FYs
 				and effective/end dates to be loaded, per @Which_ICD_Version_To_Load
 			*	Loop through all ICD CMS FYs with a cursor, loading the permanent output 
 				table with all available description files via OPENROWSET.
 
 	EXAMPLE CALL
-	exec dbo.ICD_Proc_001_Import_Descriptions_OPENROWSET 
-		@Table_Name = 'DIM_ICD_Procedure_All'
+	exec dbo.ICD_Diag_001_Import_Descriptions_OPENROWSET 
+		@Table_Name = 'DIM_ICD_Diagnosis'
 		,@Table_Action = 'DROP_CREATE'
 		,@Which_ICD_Version_To_Load = 'ALL'
 		,@Source_File_Dir = 
-			'C:\Users\Nicole\Documents\GitHub\CMS_MS_DRG_Grouper_Help\CMS_ICD_Code_Descriptions'
+			'C:\Users\Nicole\Documents\GitHub\CMS_MS_DRG_Grouper_Help\ICD_Diag_Desc'
 
 	CHANGE LOG
 		2019.09.22 NLM
 			*	Added FY 2020 to file load
 		2018.08.19 NLM
 			*	Added FY 2019 to file load
+		2018.05.13 NLM
+			*	Think I resolved the encoding issues via GitAttributes, so removed
+				the @Which_CodePage input parameter
+			*	ENCODING NOTE: This repo is set so that Windows will import the handful of 
+				descriptions that have accented characters. I tried LF ending and UTF-8
+				(with or without BOM), but Git and SQL Server (including 2012, which doesn't
+				recognize UTF-8 CodePage of 65001) weren't playing nicely together.
+				I think I've fixed this via .gitattributes (CRLF line endings and Latin 1252
+				encoding).
+				*	To check whether this is an issue, check these diagnosis codes' descriptions
+					Diagnosis_Code IN ('0413', '04671', '38600', '38601', '38602', '38603', '38604')
 		2018.03.11 NLM
 			*	Edited documentation to accommodate the new directory INFO__ file
 			*	Added @FieldNm_... parameters to allow customizing the field names
 				in the final output table.
-			*	Outside of this SP, changed the line delimiter for the .fmt files
-				called here. Git's default gitattributes normalizes all Windows-style
-				line endings (\r\n) to *nix ending (\n). D'oh!
+			*	Unsuccessful attempt to fix UTF-8 encoding issues. Changes made here
+				are reverted (and this issue is fixed) by the 2018.05.12 release.
 		2018.02.25 NLM
 			*	Minor fixes to documentation in change log vs. code body. *sigh*
-		2018.02.18 NLM (Nicole Lindner-Miles) 
+		2018.02.18 NLM
+			*	Minor changes related to adding parallel SPs to import ICD procedure codes
+				*	Reworded some comments/documentation within this code 
+				*	Renamed flat-file subdirectories to ICD_9 and ICD_10, updated references
+					to them. 
+				*	Changes to accommodate .fmt file changes -- made field names generic
+					(mainly ICD_Code instead of Diagnosis_Code) so that the same .fmt files
+					can be used to import both diagnosis and procedure codes
+		2018.02.11 NLM
+			*	Added FY 2010 ICD codes
+			*	Refactored the import procedure for ICD-9, simplifying this SP, because the 
+				FY 2010 flat file differed from all other ICD-9 code files available on
+				cms.gov. See repo README for details on how the files differed and what I did
+				to create the ICD-9 files with a single layout
+				*	Instead of trying to deal with different file layouts among the ICD-9 codes
+					(and dealing with other ICD-9 releases that had two separate flat .txt files, 
+					one with short descriptions, the other with long, I finally broke down and 
+					did a save-as of the Excel files within the ICD-9 zip archives
+					to be a standard file format that is importable by SQL Server (sigh, for SQL
+					ignoring the de facto standard for .csv files, RFC 4180)
+		2018.01.15 NLM
+			*	Add documentation
+		2018.01.02 NLM (Nicole Lindner-Miles) 
 			*	Initial version
 
 	INTELLECTUAL PROPERTY
@@ -186,9 +218,9 @@ BEGIN
 	
 
 
-	/* Load all ICD procedure codes and their descriptions
+	/* Load all ICD diagnosis codes and their descriptions
 	=================================================================================== */
-	RAISERROR ('%s%s--- --- LOAD ICD PROCEDURE CODES --- ---', 0, 1, @NewLine, @NewLine) 
+	RAISERROR ('%s%s--- --- LOAD ICD DIAGNOSIS CODES --- ---', 0, 1, @NewLine, @NewLine) 
 
 	/**
 	 *  Create temporary table #CMS_FY_Release_Map and populate it with all CMS FYs
@@ -218,11 +250,11 @@ BEGIN
 			,CMS_File_Name
 		)
 		VALUES
-			 (10, 2016, '2015-10-01', '2016-09-30', 'icd10pcs_order_2016.txt')
-			,(10, 2017, '2016-10-01', '2017-09-30', 'icd10pcs_order_2017.txt')
-			,(10, 2018, '2017-10-01', '2018-09-30', 'icd10pcs_order_2018.txt')
-			,(10, 2019, '2018-10-01', '2019-09-30', 'icd10pcs_order_2019.txt')
-			,(10, 2020, '2019-10-01', '2020-09-30', 'icd10pcs_order_2020.txt')
+			 (10, 2016, '2015-10-01', '2016-09-30', 'icd10cm_order_2016.txt')
+			,(10, 2017, '2016-10-01', '2017-09-30', 'icd10cm_order_2017.txt')
+			,(10, 2018, '2017-10-01', '2018-09-30', 'icd10cm_order_2018.txt')
+			,(10, 2019, '2018-10-01', '2019-09-30', 'icd10cm_order_2019.txt')
+			,(10, 2020, '2019-10-01', '2020-09-30', 'icd10cm_order_2020.txt')
 	END
 
 	IF @Which_ICD_Version_To_Load IN ('ALL', '09', '9')
@@ -235,12 +267,12 @@ BEGIN
 			,CMS_File_Name
 		)
 		VALUES
-			 (9, 2010, '2009-10-01', '2010-09-30', 'CMS27_DESC_LONG_SHORT_SG_092709 Sheet1.txt')
-			,(9, 2011, '2010-10-01', '2011-09-30', 'CMS28_DESC_LONG_SHORT_SG Sheet1.txt')
-			,(9, 2012, '2011-10-01', '2012-09-30', 'CMS29_DESC_LONG_SHORT_SG Sheet1.txt')
-			,(9, 2013, '2012-10-01', '2013-09-30', 'CMS30_DESC_LONG_SHORT_SG 051812 Sheet1.txt')
-			,(9, 2014, '2013-10-01', '2014-09-30', 'CMS31_DESC_LONG_SHORT_SG Sheet1.txt')
-			,(9, 2015, '2014-10-01', '2015-09-30', 'CMS32_DESC_LONG_SHORT_SG Sheet1.txt')
+			 (9, 2010, '2009-10-01', '2010-09-30', 'V27LONG_SHORT_DX_110909u021012 Sheet1.txt')
+			,(9, 2011, '2010-10-01', '2011-09-30', 'CMS28_DESC_LONG_SHORT_DX Sheet1.txt')
+			,(9, 2012, '2011-10-01', '2012-09-30', 'CMS29_DESC_LONG_SHORT_DX 101111u021012 Sheet1.txt')
+			,(9, 2013, '2012-10-01', '2013-09-30', 'CMS30_DESC_LONG_SHORT_DX 080612 Sheet1.txt')
+			,(9, 2014, '2013-10-01', '2014-09-30', 'CMS31_DESC_LONG_SHORT_DX Sheet1.txt')
+			,(9, 2015, '2014-10-01', '2015-09-30', 'CMS32_DESC_LONG_SHORT_DX Sheet1.txt')
 	END
 
 
@@ -282,7 +314,7 @@ BEGIN
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 
-		RAISERROR ('%s--- Inserting ICD-%s procedure codes for CMS FY %s from file %s ---', 0, 1, @NewLine, @This_ICD_Version, @This_CMS_FY, @This_CMS_File_Name) 
+		RAISERROR ('%s--- Inserting ICD-%s diagnosis codes for CMS FY %s from file %s ---', 0, 1, @NewLine, @This_ICD_Version, @This_CMS_FY, @This_CMS_File_Name) 
 
 		IF @This_ICD_Version = 9
 		BEGIN
@@ -307,14 +339,13 @@ BEGIN
 				+ ',SUBSTRING(LTRIM(RTRIM(REPLACE(src.Code_Desc_Long, ''""'', ''"''))), 1, 323) AS ' + @FieldNm_Code_Desc_Long
 			+ '
 			FROM OPENROWSET(
-				BULK ''' + @Source_File_Dir + '\ICD_9\' + @This_CMS_File_Name
+				BULK ''' + @Source_File_Dir + '\' + @This_CMS_File_Name
 				+ '''
-				,FORMATFILE = ''' + @Source_File_Dir + '\ICD_9\icd9_desc_long_short_format.fmt'
+				,FORMATFILE = ''' + @Source_File_Dir + '\..\MSSQL_format\diag_proc_desc_icd9.fmt'
 				+ '''
-				,ERRORFILE = ''' + @Source_File_Dir + '\ICD_9\Errorfile_Proc_FY' + @This_CMS_FY + '.err'''
+				,ERRORFILE = ''' + @Source_File_Dir + '\Errorfile_Diag_FY' + @This_CMS_FY + '.err'''
 				+ '
 				,FIRSTROW = 2
-				-- ,CODEPAGE = 65001
 			) AS src 
 			;'
 
@@ -343,14 +374,13 @@ BEGIN
 				+ ',SUBSTRING(LTRIM(RTRIM(src.Code_Desc_Long)), 1, 323) AS ' + @FieldNm_Code_Desc_Long
 			+ '
 			FROM OPENROWSET(
-				BULK ''' + @Source_File_Dir + '\ICD_10\' + @This_CMS_File_Name
+				BULK ''' + @Source_File_Dir + '\' + @This_CMS_File_Name
 				+ '''
-				,FORMATFILE = ''' + @Source_File_Dir + '\ICD_10\icd10_order_format.fmt'
+				,FORMATFILE = ''' + @Source_File_Dir + '\..\MSSQL_format\diag_proc_desc_icd10.fmt'
 				+ '''
-				,ERRORFILE = ''' + @Source_File_Dir + '\ICD_10\Errorfile_Proc_FY' + @This_CMS_FY + '.err'''
+				,ERRORFILE = ''' + @Source_File_Dir + '\Errorfile_Diag_FY' + @This_CMS_FY + '.err'''
 				+ '
 				,FIRSTROW = 1
-				-- ,CODEPAGE = 65001
 			) AS src 
 			WHERE 
 				Code_Is_HIPAA_Valid = ''1''

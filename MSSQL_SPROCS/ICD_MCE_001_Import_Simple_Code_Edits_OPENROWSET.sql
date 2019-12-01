@@ -76,7 +76,7 @@ BEGIN
 		,@Table_Action = 'DROP_CREATE'
 		,@Which_ICD_Version_To_Load = 'ALL'
 		,@Source_File_Dir = 
-			'C:\Users\Nicole\Documents\GitHub\CMS_MS_DRG_Grouper_Help\CMS_MCE_Simple_ICD_Code_Edits'
+			'C:\Users\Nicole\Documents\GitHub\CMS_MS_DRG_Grouper_Help\MCE_Code_Edits_Simple'
 
 	CHANGE LOG
 		2019.09.22 NLM
@@ -325,7 +325,7 @@ BEGIN
 		FROM OPENROWSET(
 			BULK ''' + @Source_File_Dir + '\MCE_Simple_Code_Edits_v' + @This_MCE_Version + '.txt'
 			+ '''
-			,FORMATFILE = ''' + @Source_File_Dir + '\MCE_Simple_Code_Edits_Format.fmt'
+			,FORMATFILE = ''' + @Source_File_Dir + '\..\MSSQL_format\MCE_Simple_Code_Edits.fmt'
 			+ '''
 			,ERRORFILE = ''' + @Source_File_Dir + '\MCE_Edits_v' + @This_MCE_Version + '.err'''
 			+ '
