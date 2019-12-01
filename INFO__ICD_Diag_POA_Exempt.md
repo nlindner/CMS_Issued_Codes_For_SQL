@@ -1,11 +1,11 @@
-# CMS_ICD_Diagnoses_POA_Exempt
+# [CMS POA-Exempt ICD Diagnosis Codes](/ICD_Diag_POA_Exempt)
 
 ### Overview
-  * Contains CMS releases of ICD diagnosis codes that are exempt from Present On Admission (POA) reporting, for CMS Fiscal Years (FYs) 2011-2020.
-  * The flat files within this directory are read in via one of the ICD_Diag_002_Import\POA\_Exempt_... stored procedures.
+  * Contains CMS releases of ICD diagnosis codes that are exempt from Present On Admission (POA) reporting, for CMS Fiscal Years (FYs) 2010-2020.
+  * The flat files within this directory are read in via one of the ICD_Diag_002_Import\_POA\_Exempt_... stored procedures.
 
 ### Files Available Here
- * Note that except for FY 2010 and 2011, this preserves any discrepancies in the (long) code descriptions that exist between the CMS releases of ICD diagnosis codes and POA-exempt diagnosis codes; Those discrepancies tend to be wording differences, spelling differences, or spacing differences. At least some of the ICD-9 discrepancies seem to be related to spelling or spacing corrections that are not listed in [CMS' documentation of new, deleted, and revised codes](https://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/summarytables.html) but that are visible if you compare the diagnosis descriptions across years (e.g., 66070, E8304, E8305, V031, V062). These are usually minor. A few examples are:
+ * Note that except for FY 2010 and 2011, this preserves any discrepancies in the (long) code descriptions that exist between the CMS releases of ICD diagnosis codes and POA-exempt diagnosis codes; Those discrepancies tend to be wording differences, spelling differences, or spacing differences. At least some of the ICD-9 discrepancies seem to be related to spelling or spacing corrections that are not listed in [CMS' documentation of new, deleted, and revised codes](https://www.cms.gov/Medicare/Coding/ICD9ProviderDiagnosticCodes/summarytables.html) but that are visible if you compare the diagnosis descriptions across years. These are usually minor. A few examples are:
    - ICD 9: 66070, V1919, 75530, V1649, E8302
    - ICD 10: O0910, T82857D, T8379XD, S02118D, S0211GD
  * __CMS FY 2015-2020:__ Files for all ICD-10 releases and the last ICD-9 release (FY 2015) listed in the table below are available at the CMS under [Hospital-Acquired Conditions (Present on Admission Indicator)](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/HospitalAcqCond/Coding.html). 

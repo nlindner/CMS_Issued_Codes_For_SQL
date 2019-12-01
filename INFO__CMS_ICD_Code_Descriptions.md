@@ -1,14 +1,14 @@
-# CMS_ICD_Code_Descriptions
+# CMS ICD Diagnosis/Procedure Codes and Descriptions
 
 ### Overview
-  * Contains CMS releases for ICD-9 and ICD-10 diagnosis and procedure codes, for CMS fiscal years (FYs) 2010-2020
-  * The flat files within the ICD_9 and ICD_10 subdirectories are read in via the ICD_Diag_001_Import_Descriptions... or ICD_Proc_001_Import_Descriptions... stored procedures.
+  * Contains CMS releases for ICD-9 and ICD-10 diagnosis and procedure codes, for CMS fiscal years (FYs) 2010-2020, as the codes and their long and short descriptions. 
+  * Probably self-explanatory, but diagnosis codes are in [ICD_Diag_Desc](/ICD_Diag_Desc) and loaded via the ICD_Diag_001_Import_Descriptions... stored procedure and procedures codes are in [ICD_Proc_Desc](/ICD_Proc_Desc) and loaded via ICD_Proc_001_Import_Descriptions... .
 
 ### Files Available Here
-  * **Note**: The file specification for the ICD-10 order files allows the Code_Desc_Long field to be up to 323 characters, but the max observed length in ICD-9 and ICD-10 files is never longer than 228 (diagnoses) or 163 (for procedures). 
-  * The ICD subdirectories contain flat files that are imported by the stored procedures. The file layouts are as follows:
-  	  - [ICD_9](/CMS_ICD_Code_Descriptions/ICD_9): One file for each FY and code type, bar-delimited format, containing ICD codes and short and long descriptions, with double-quotes surrounding every field. This file specification double-escapes any double-quotes within the descriptions, so the INSERT statement in the OPENROWSET SPs cleans them out again with a REPLACE() function
-	  - [ICD_10](/CMS_ICD_Code_Descriptions/ICD_10): One file for each FY and code type, fixed-width format, containing ICD codes and short and long descriptions. These were downloaded directly from cms.gov. The fixed-width format means that no delimiters exist. The .fmt file has placeholders (Filler_##) to account for them.
+  * **Note**: The file specification for the ICD-10 order files allows the Code_Desc_Long field to be up to 323 characters, but the max observed length in ICD-9 and ICD-10 files is never longer than 228 (diagnoses) or 163 (procedures). 
+  * Both diagnosis and procedure codes have the same file layout, but those layouts are different for ICD-9 vs. -10, as follows:
+      - **ICD-9**: One file for each FY and code type, bar-delimited format, containing ICD codes and short and long descriptions, with double-quotes surrounding every field. This file specification double-escapes any double-quotes within the descriptions, so the INSERT statement in the OPENROWSET SPs cleans them out again with a REPLACE() function.
+      - **ICD-10**: One file for each FY and code type, fixed-width format, containing ICD codes and short and long descriptions. These were downloaded directly from cms.gov. The fixed-width format means that no delimiters exist. The .fmt file has placeholders (Filler_##) to account for them.
   * The flat files with the ICD-9 code descriptions available here are reformatted versions of the files I downloaded directly from CMS, after saving the .xls or .xlsx code-descriptions file as bar-delimited flat file, with double-quote text qualifiers around all fields. The source is Excel files because of the variations in what was available in the ICD-9 releases as the flat (non-Excel) files. For example, the flat files:
       - Did not have a single, common file structure: FY 2010 contained one flat file with both long and short descriptions; all others contained a separate short-description file and long-description file.
       - FY 2010 was also the only release where the flat file was not space-delimited. Instead it was .csv/comma-delimited AND used double-quotes as text-qualifiers, but only around descriptions that contained commas (and other special characters?). Naturally, SQL Server does not recognize the unofficial/de facto standard for .csv files (e.g., RFC 4180).

@@ -1,8 +1,8 @@
-# CMS MCE Simple ICD Code Edits
+# [CMS MCE Simple ICD Code Edits](/MCE_Code_Edits_Simple)
 
 ### Overview
   * This is derived from the documentation for the MS (Medicare Severity) DRG (Diagnostic Related Group) Grouper software with Medicare Code Editor ([MCE](https://www.cms.gov/Medicare/Medicare-Fee-for-Service-Payment/AcuteInpatientPPS/MS-DRG-Classifications-and-Software.html)).  
-  * This repo contains the "simple" diagnosis and procedure code edits from the Medicare Code Editor documentation, for CMS fiscal years (FYs) 2010-2020 (MCE versions 27-37, MCE skipped version 28 to re-align with the CMS release versions for ICD codes).
+  * This repo contains the "simple" diagnosis and procedure code edits from the Medicare Code Editor documentation, for CMS fiscal years (FYs) 2010-2020, MCE versions 27-37 (MCE skipped version 28 to re-align with the CMS release versions for ICD codes).
   * The flat files within this directory are read in via one of the ICD_MCE_001_Import_Simple_Code_Edits... stored procedures.
 
 ### "Simple" Code Edits: What that Means
@@ -25,11 +25,11 @@
 #### Data Dictionary for CMS MCE Code Edits in this Repo
   * **ICD_Code_Type**: Valid Values: P (ICD surgical procedure code) or D (ICD diagnosis code)
   * **ICD_Desc**: The code description provided in the MCE documentation. This is the "short" description
-  * **MCE_Section** and **MCE_Subsection**: Within chapter 1 of the MCE documentation, the section and subsection where these codes are listed (if subsections do not exist, that is represented with "\_") ). There is a one-to-one match between these two fields and the MCE_Edit_Type combined with the ICD_Code_Type.
+  * **MCE_Section** and **MCE_Subsection**: Within chapter 1 of the MCE documentation, the section and subsection where these codes are listed (if subsections do not exist, that is represented with "\_"). There is a one-to-one match between these two fields and the MCE_Edit_Type combined with the ICD_Code_Type.
   * **MCE_Edit_Type**: Short, standardized value that references the label in the MCE documentation. See the [Mapping MCE Fields](#mapping-mce-fields-to-labels-in-mce-documentation) section for all valid values
 
 #### Mapping MCE Fields to Labels in MCE Documentation
-| Label in MCE Documentation | MCE_Section Subsection | MCE_Edit_Type | ICD_Code_Type |
+| Label in MCE Documentation | MCE Section Subsection | MCE Edit Type | ICD Code Type |
 | -------------------------- | ----------- | ------------------ | ------------- |
 | Age conflict: Perinatal/Newborn diagnoses | 4 A  | Newborn_Only	| D |
 | Age conflict: Pediatric diagnoses (age 0 through 17) | 4 B  | Pediatric_Only	| D |
@@ -68,7 +68,7 @@
 | 18   | Wrong_Performed  |D|3|3|3|3|3|
 | 19   | Noncovered_LOS_96hr  |P|1|1|1|1|1|
 
-**Note <sup>1</sup>:** Starting with the FY 2019 release, section 8's contents were reorganized as subsection A and subsection B was added to identify  questionable obstetric admissions. Subsection B is not included here, as noted above under ["Simple" Code Edits](#simple-code-edits-what-that-means).
+**Note <sup>1</sup>:** Starting with the FY 2019 release, section 8's contents were relabeled as subsection A, and subsection B was added to identify  questionable obstetric admissions. Subsection B is not included here, as noted above under ["Simple" Code Edits](#simple-code-edits-what-that-means).
 
 #### ICD-9 CM: Summary Totals for CMS MCE Code Edits in this Repo
 | MCE Section Subsection | MCE Edit Type | ICD Code Type | 2015 | 2014 | 2013 | 2012 | 2011 | 2010 |
